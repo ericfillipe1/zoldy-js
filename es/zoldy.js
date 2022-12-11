@@ -1969,15 +1969,15 @@ var getSnapshotOrThrow = function getSnapshotOrThrow(zoldyContext) {
   return zoldyContext != null ? mono.just(zoldyContext) : mono.error(new Error("NotFound ZoldySnapshot"));
 };
 
-function _createSuper$1(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$1(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _createSuper$2(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$2(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _isNativeReflectConstruct$2() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 var ZoldyValueFamily = /*#__PURE__*/_createClass$1(function ZoldyValueFamily() {
   _classCallCheck$1(this, ZoldyValueFamily);
   _defineProperty$1(this, "paramsBuild", void 0);
 });
 var ZoldyStateFamily = /*#__PURE__*/function (_ZoldyValueFamily) {
   _inherits(ZoldyStateFamily, _ZoldyValueFamily);
-  var _super = _createSuper$1(ZoldyStateFamily);
+  var _super = _createSuper$2(ZoldyStateFamily);
   function ZoldyStateFamily() {
     _classCallCheck$1(this, ZoldyStateFamily);
     return _super.apply(this, arguments);
@@ -1985,11 +1985,11 @@ var ZoldyStateFamily = /*#__PURE__*/function (_ZoldyValueFamily) {
   return _createClass$1(ZoldyStateFamily);
 }(ZoldyValueFamily);
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _createSuper$1(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$1(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 var ZoldyAtomFamilyImpl = /*#__PURE__*/function (_ZoldyStateFamily) {
   _inherits(ZoldyAtomFamilyImpl, _ZoldyStateFamily);
-  var _super = _createSuper(ZoldyAtomFamilyImpl);
+  var _super = _createSuper$1(ZoldyAtomFamilyImpl);
   function ZoldyAtomFamilyImpl(config) {
     var _this;
     _classCallCheck$1(this, ZoldyAtomFamilyImpl);
@@ -2038,7 +2038,7 @@ var ZoldyAtomFamilyImpl = /*#__PURE__*/function (_ZoldyStateFamily) {
   return ZoldyAtomFamilyImpl;
 }(ZoldyStateFamily);
 
-var atomfamily = function atomfamily(config) {
+var atomfamily$1 = function atomfamily(config) {
   return new ZoldyAtomFamilyImpl(config);
 };
 
@@ -2090,11 +2090,144 @@ var atom$1 = function atom(config) {
   return new ZoldyAtomImpl(config);
 };
 
-var index = {
-  atomFamily: atomfamily,
-  atom: atom$1
-};
-var atomFamily = atomfamily;
-var atom = atom$1;
+var ZoldySelectorValueImpl = /*#__PURE__*/function () {
+  function ZoldySelectorValueImpl(config) {
+    _classCallCheck$1(this, ZoldySelectorValueImpl);
+    _defineProperty$1(this, "_get", void 0);
+    _defineProperty$1(this, "path", void 0);
+    this.path = config['path'];
+    this._get = config['get'];
+  }
+  _createClass$1(ZoldySelectorValueImpl, [{
+    key: "get",
+    value: function get() {
+      var _this = this;
+      var path = this.path;
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
+        return zoldyContext.get({
+          get: function get() {
+            return _this["_get"];
+          },
+          path: path
+        });
+      });
+    }
+  }]);
+  return ZoldySelectorValueImpl;
+}();
+var ZoldySelectorStateImpl = /*#__PURE__*/function () {
+  function ZoldySelectorStateImpl(config, zoldyValue) {
+    _classCallCheck$1(this, ZoldySelectorStateImpl);
+    this.zoldyValue = zoldyValue;
+    _defineProperty$1(this, "_set", void 0);
+    this._set = config.set;
+  }
+  _createClass$1(ZoldySelectorStateImpl, [{
+    key: "path",
+    get: function get() {
+      return this.zoldyValue.path;
+    }
+  }, {
+    key: "get",
+    value: function get() {
+      return this.zoldyValue.get();
+    }
+  }, {
+    key: "set",
+    value: function set(value) {
+      return this._set(value);
+    }
+  }]);
+  return ZoldySelectorStateImpl;
+}();
 
-export { atom, atomFamily, index as default };
+var Selector = function Selector(config) {
+  if ("set" in config) {
+    return new ZoldySelectorStateImpl(config, new ZoldySelectorValueImpl(config));
+  } else {
+    return new ZoldySelectorValueImpl(config);
+  }
+};
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+var ZoldyAtomFamilyValueImpl = /*#__PURE__*/function (_ZoldyValueFamily) {
+  _inherits(ZoldyAtomFamilyValueImpl, _ZoldyValueFamily);
+  var _super = _createSuper(ZoldyAtomFamilyValueImpl);
+  function ZoldyAtomFamilyValueImpl(config) {
+    var _this;
+    _classCallCheck$1(this, ZoldyAtomFamilyValueImpl);
+    _this = _super.call(this);
+    _defineProperty$1(_assertThisInitialized(_this), "_get", void 0);
+    _defineProperty$1(_assertThisInitialized(_this), "paramsBuild", void 0);
+    _this.paramsBuild = new ZoldyParamsImpl(config.path, config.params);
+    _this._get = config['get'];
+    return _this;
+  }
+  _createClass$1(ZoldyAtomFamilyValueImpl, [{
+    key: "get",
+    value: function get(params) {
+      var _this2 = this;
+      var path = this.paramsBuild.encode(params);
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
+        return zoldyContext.get({
+          get: function get() {
+            return _this2['_get'](params);
+          },
+          path: path
+        });
+      });
+    }
+  }]);
+  return ZoldyAtomFamilyValueImpl;
+}(ZoldyValueFamily);
+var ZoldyAtomFamilyStateImpl = /*#__PURE__*/function (_ZoldyStateFamily) {
+  _inherits(ZoldyAtomFamilyStateImpl, _ZoldyStateFamily);
+  var _super2 = _createSuper(ZoldyAtomFamilyStateImpl);
+  function ZoldyAtomFamilyStateImpl(config, zoldyValueFamily) {
+    var _this3;
+    _classCallCheck$1(this, ZoldyAtomFamilyStateImpl);
+    _this3 = _super2.call(this);
+    _this3.zoldyValueFamily = zoldyValueFamily;
+    _defineProperty$1(_assertThisInitialized(_this3), "_set", void 0);
+    _this3._set = config['set'];
+    return _this3;
+  }
+  _createClass$1(ZoldyAtomFamilyStateImpl, [{
+    key: "paramsBuild",
+    get: function get() {
+      return this.zoldyValueFamily.paramsBuild;
+    }
+  }, {
+    key: "set",
+    value: function set(params, value) {
+      return this._set(params, value);
+    }
+  }, {
+    key: "get",
+    value: function get(params) {
+      return this.zoldyValueFamily.get(params);
+    }
+  }]);
+  return ZoldyAtomFamilyStateImpl;
+}(ZoldyStateFamily);
+
+var atomfamily = function atomfamily(config) {
+  if ("set" in config) {
+    return new ZoldyAtomFamilyStateImpl(config, new ZoldyAtomFamilyValueImpl(config));
+  } else {
+    return new ZoldyAtomFamilyValueImpl(config);
+  }
+};
+
+var index = {
+  atomFamily: atomfamily$1,
+  atom: atom$1,
+  selector: Selector
+};
+var atomFamily = atomfamily$1;
+var atom = atom$1;
+var selector = Selector;
+var selectorFamily = atomfamily;
+
+export { atom, atomFamily, index as default, selector, selectorFamily };

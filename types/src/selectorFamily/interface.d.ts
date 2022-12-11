@@ -1,15 +1,15 @@
 import { Fields } from "../param/interface";
 import { ZoldyStateFamily, ZoldyValueFamily } from "../source";
 import { SetFamily, GetFamily } from "../types";
-export type ZoldyAtomFamilyBuildConfigReadOnly<P, T> = {
+export type ZoldySelectorFamilyBuildConfigReadOnly<P, T> = {
     path: string;
     params: Fields<P>;
     get: GetFamily<P, T>;
 };
-export type ZoldyAtomFamilyBuildConfig<P, T> = {
+export type ZoldySelectorFamilyBuildConfig<P, T> = {
     set: SetFamily<P, T>;
-} & ZoldyAtomFamilyBuildConfigReadOnly<P, T>;
-export type ZoldyAtomFamilyStatic = {
-    <P, T>(config: ZoldyAtomFamilyBuildConfigReadOnly<P, T>): ZoldyValueFamily<P, T>;
-    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyStateFamily<P, T>;
+} & ZoldySelectorFamilyBuildConfigReadOnly<P, T>;
+export type ZoldySelectorFamilyStatic = {
+    <P, T>(config: ZoldySelectorFamilyBuildConfigReadOnly<P, T>): ZoldyValueFamily<P, T>;
+    <P, T>(config: ZoldySelectorFamilyBuildConfig<P, T>): ZoldyStateFamily<P, T>;
 };
