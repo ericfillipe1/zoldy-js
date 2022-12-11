@@ -1,6 +1,6 @@
 {
   "name": "zoldy",
-  "version": "0.0.0-alpha.1",
+  "version": "0.0.0-alpha.3",
   "description": "",
   "types": "./types/src/index.d.ts",
   "main": "cjs/zoldy.js",
@@ -97,6 +97,6 @@
     "yup": "^0.32.9"
   },
   "dependencies": {
-    "rakun": "0.0.0-alpha.29"
+    "rakun": "0.0.0-alpha.30"
   }
 }

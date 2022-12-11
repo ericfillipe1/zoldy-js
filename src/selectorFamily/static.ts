@@ -1,7 +1,7 @@
 import { ZoldyAtomFamilyStateImpl, ZoldyAtomFamilyValueImpl } from "./impl";
-import { ZoldyAtomFamilyStatic } from "./interface";
+import { ZoldySelectorFamilyStatic } from "./interface";
 
-const atomfamily: ZoldyAtomFamilyStatic = (config: any) => {
+const atomfamily: ZoldySelectorFamilyStatic = (config: any) => {
     if ("set" in config) {
         return new ZoldyAtomFamilyStateImpl(config, new ZoldyAtomFamilyValueImpl(config)) as any;
     } else {
