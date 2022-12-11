@@ -1,12 +1,15 @@
-import { ZoldyAtomFamilyStateImpl, ZoldyAtomFamilyValueImpl } from "./impl";
+
+import { ZoldyParamsImpl } from "../param/impl";
+import selector from "../selector/static";
 import { ZoldySelectorFamilyStatic } from "./interface";
 
-const atomfamily: ZoldySelectorFamilyStatic = (config: any) => {
-    if ("set" in config) {
-        return new ZoldyAtomFamilyStateImpl(config, new ZoldyAtomFamilyValueImpl(config)) as any;
-    } else {
-
-        return new ZoldyAtomFamilyValueImpl(config) as any;
+const selectorFamily: ZoldySelectorFamilyStatic = (config: any) => {
+    return (params) => {
+        const paramsBuild = new ZoldyParamsImpl<typeof params>(config.path, config.params)
+        return selector({
+            get: config.get(params),
+            path: paramsBuild.encode(params)
+        }) as any;
     }
 }
-export default atomfamily;
+export default selectorFamily;

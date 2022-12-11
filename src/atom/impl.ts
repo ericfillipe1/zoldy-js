@@ -1,24 +1,22 @@
 
-import { mono, RakunMono, Void, WrappedValue_OPAQUE } from "rakun";
+import { RakunMono, Void } from "rakun";
 import { zoldySnapshotProvider } from "../snapshot/provider";
 import { getSnapshotOrThrow } from "../snapshot/static";
 import { ZoldyState } from "../source";
-import { ZoldyAtomBuildConfig } from "./interface";
+import { Default } from "../types";
+
+export type Config<T> = {
+    path: string
+    default: () => Default<T>
+}
 
 
 export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
-    private _default: RakunMono<T>;
+    private _default: () => Default<T>;
     path: string;
-    constructor(config: ZoldyAtomBuildConfig<T>) {
-        let result = config['default'];
+    constructor(config: Config<T>) {
         this.path = config['path'];
-        if (result instanceof Promise) {
-            this._default = mono.fromPromise(result)
-        } else if (WrappedValue_OPAQUE in (result as any)) {
-            this._default = result as RakunMono<T>
-        } else {
-            this._default = mono.just(result as T)
-        }
+        this._default = config['default'];
     }
 
     set(value: T): RakunMono<Void> {
@@ -39,7 +37,7 @@ export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
             .flatPipe(getSnapshotOrThrow)
             .flatPipe(zoldyContext => {
                 return zoldyContext.get({
-                    get: () => this["_default"],
+                    get: () => this._default(),
                     path
                 });
             })

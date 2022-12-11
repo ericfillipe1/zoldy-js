@@ -16,11 +16,11 @@ describe('atom set', () => {
         const snapshot = new ZoldySnapshotImpl(null);
         const result = await zoldySnapshotProvider.define(snapshot)
             .zipWhen(() => mono.just(snapshot.cache))
-            .zipWhen(() => user.set("test", "25"))
+            .zipWhen(() => user("test").set("25"))
             .pipe(([v1, v2]) => [...v1, v2])
             .zipWhen(() => mono.just(snapshot.cache))
             .pipe(([v1, v2]) => [...v1, v2])
-            .zipWhen(() => user.get("test"))
+            .zipWhen(() => user("test").get())
             .pipe(([v1, v2]) => [...v1, v2])
             .zipWhen(() => mono.just(snapshot.cache))
             .pipe(([v1, v2]) => [...v1, v2])
@@ -30,7 +30,7 @@ describe('atom set', () => {
             {
                 "users/test": {
                     state: "hasValue",
-                    value: 25,
+                    value: "25",
                     version: 1
                 }
             },
@@ -38,15 +38,15 @@ describe('atom set', () => {
             {
                 "users/test": {
                     state: "hasValue",
-                    value: 25,
+                    value: "25",
                     version: 1
                 }
             },
-            25,
+            "25",
             {
                 "users/test": {
                     state: "hasValue",
-                    value: 25,
+                    value: "25",
                     version: 1
                 }
             }

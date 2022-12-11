@@ -1,7 +1,7 @@
 import { ZoldySelectorStateImpl, ZoldySelectorValueImpl } from "./impl";
 import { ZoldySelectorStatic } from "./interface";
 
-const Selector: ZoldySelectorStatic = (config) => {
+const selector: ZoldySelectorStatic = (config) => {
 
     if ("set" in config) {
         return new ZoldySelectorStateImpl(config, new ZoldySelectorValueImpl(config)) as any;
@@ -11,4 +11,4 @@ const Selector: ZoldySelectorStatic = (config) => {
     }
 
 }
-export default Selector;
+export default selector;
