@@ -1,5 +1,6 @@
-import { RakunMono, RakunSource, Void } from "rakun";
+
 import { Fields } from "../param/interface";
+import { ZoldyStateFamily } from "../source";
 import { DefaultFamily } from "../types";
 
 export type ZoldyAtomFamilyBuildConfig<P, T> = {
@@ -11,13 +12,5 @@ export type ZoldyAtomFamilyBuildConfig<P, T> = {
 
 
 export type ZoldyAtomFamilyStatic = {
-    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyAtomFamily<P, T>
-}
-
-
-
-
-export interface ZoldyAtomFamily<P, T> {
-    set(params: P, value: T): RakunMono<Void>;
-    get(params: P): RakunMono<T>;
+    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyStateFamily<P, T>
 }

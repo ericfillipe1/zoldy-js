@@ -1,4 +1,4 @@
-import { Fields, FormatField, ZoldyParams } from "./interface";
+import { Fields, FormatField, ZoldyParamsBuild } from "./interface";
 const encode = (fields: Fields<any>, fieldNameArray: string[], defualtValue: string): ((v: any) => string) => {
     const [fieldName, ...fieldNameArrayRest] = fieldNameArray
     if (fieldName) {
@@ -13,7 +13,7 @@ const encode = (fields: Fields<any>, fieldNameArray: string[], defualtValue: str
 }
 
 
-export class ZoldyParamsImpl<P> implements ZoldyParams<P> {
+export class ZoldyParamsImpl<P> implements ZoldyParamsBuild<P> {
     constructor(private path: string, private fields: Fields<P>) {
 
     }

@@ -2,10 +2,11 @@
 import { mono, RakunMono, Void, WrappedValue_OPAQUE } from "rakun";
 import { zoldySnapshotProvider } from "../snapshot/provider";
 import { getSnapshotOrThrow } from "../snapshot/static";
-import { ZoldyAtom, ZoldyAtomBuildConfig } from "./interface";
+import { ZoldyState } from "../source";
+import { ZoldyAtomBuildConfig } from "./interface";
 
 
-export class ZoldyAtomImpl<T> implements ZoldyAtom<T>  {
+export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
     private _default: RakunMono<T>;
     path: string;
     constructor(config: ZoldyAtomBuildConfig<T>) {

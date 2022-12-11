@@ -1,18 +1,17 @@
-import { RakunMono, Void } from "rakun";
-import { Default } from "../types";
+import { ZoldyState, ZoldyValue } from "../source";
+import { Get, Set } from "../types";
 
+
+export type ZoldySelectorBuildConfigReadOnly<T> = {
+    path: string
+    get: Get<T>
+}
+export type ZoldySelectorBuildConfig<T> = {
+    set: Set<T>
+} & ZoldySelectorBuildConfigReadOnly<T>
 
 
 export interface ZoldySelectorStatic {
-    <T>(path: ZoldySelectorBuildConfig<T>): ZoldySelector<T>
-}
-
-export interface ZoldySelector<T> {
-    set(value: T): RakunMono<Void>;
-    get(): RakunMono<T>;
-}
-
-export type ZoldySelectorBuildConfig<T> = {
-    path: string
-    get: Default<T>
+    <T>(path: ZoldySelectorBuildConfigReadOnly<T>): ZoldyValue<T>
+    <T>(path: ZoldySelectorBuildConfig<T>): ZoldyState<T>
 }

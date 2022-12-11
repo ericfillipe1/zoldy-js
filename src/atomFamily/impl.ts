@@ -1,17 +1,19 @@
 
 import { mono, RakunMono, Void, WrappedValue_OPAQUE } from "rakun";
 import { ZoldyParamsImpl } from "../param/impl";
-import { ZoldyParams } from "../param/interface";
+import { ZoldyParamsBuild } from "../param/interface";
 import { zoldySnapshotProvider } from "../snapshot/provider";
 import { getSnapshotOrThrow } from "../snapshot/static";
-import { ZoldyAtomFamily, ZoldyAtomFamilyBuildConfig } from "./interface";
+import { ZoldyStateFamily } from "../source";
+import { ZoldyAtomFamilyBuildConfig } from "./interface";
 
 
-export class ZoldyAtomFamilyImpl<P, T> implements ZoldyAtomFamily<P, T>  {
+export class ZoldyAtomFamilyImpl<P, T> extends ZoldyStateFamily<P, T>  {
     private _default: (params: P) => RakunMono<T>;
-    params: ZoldyParams<P>;
+    paramsBuild: ZoldyParamsBuild<P>;
     constructor(config: ZoldyAtomFamilyBuildConfig<P, T>) {
-        this.params = new ZoldyParamsImpl<P>(config.path, config.params)
+        super();
+        this.paramsBuild = new ZoldyParamsImpl<P>(config.path, config.params)
         this._default = (params: P) => {
             let result = config['default'](params);
             if (result instanceof Promise) {
@@ -24,7 +26,7 @@ export class ZoldyAtomFamilyImpl<P, T> implements ZoldyAtomFamily<P, T>  {
         }
     }
     set(params: P, value: T): RakunMono<Void> {
-        var path = this.params.encode(params)
+        var path = this.paramsBuild.encode(params)
         return zoldySnapshotProvider.get()
             .flatPipe(getSnapshotOrThrow)
             .flatPipe(zoldyContext => {
@@ -36,7 +38,7 @@ export class ZoldyAtomFamilyImpl<P, T> implements ZoldyAtomFamily<P, T>  {
             })
     }
     get(params: P): RakunMono<T> {
-        var path = this.params.encode(params)
+        var path = this.paramsBuild.encode(params)
         return zoldySnapshotProvider.get()
             .flatPipe(getSnapshotOrThrow)
             .flatPipe(zoldyContext => {

@@ -14,7 +14,7 @@
     "native",
     "umd"
   ],
-  "repository": "https://github.com/skolozadas/zoldy-js.git",
+  "repository": "git@github.com:ericfillipe1/zoldy-js.git",
   "scripts": {
     "prepare": "install-peers",
     "build": "rollup -c && yarn tsc-dts",

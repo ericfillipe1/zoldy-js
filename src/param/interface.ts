@@ -5,7 +5,7 @@ export type FormatField<T> = {
 }
 
 export type Fields<T> = FormatField<T> | { [P in keyof T]: Fields<T[P]> }
-export interface ZoldyParams<P> {
+export interface ZoldyParamsBuild<P> {
     encode(params: P): string;
 }
 

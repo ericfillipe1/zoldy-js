@@ -1,16 +1,12 @@
-import { RakunMono, RakunSource, Void } from "rakun";
+import { ZoldyState } from "../source";
 import { Default } from "../types";
 
 
 
 export interface ZoldyAtomStatic {
-    <T>(path: ZoldyAtomBuildConfig<T>): ZoldyAtom<T>
+    <T>(path: ZoldyAtomBuildConfig<T>): ZoldyState<T>
 }
 
-export interface ZoldyAtom<T> {
-    set(value: T): RakunMono<Void>;
-    get(): RakunMono<T>;
-}
 
 export type ZoldyAtomBuildConfig<T> = {
     path: string

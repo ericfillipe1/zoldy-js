@@ -1,23 +1,18 @@
-import { RakunMono, Void } from "rakun";
 import { Fields } from "../param/interface";
-import { DefaultFamily } from "../types";
+import { ZoldyStateFamily, ZoldyValueFamily } from "../source";
+import { SetFamily, GetFamily } from "../types";
 
-export type ZoldyAtomFamilyBuildConfig<P, T> = {
+export type ZoldyAtomFamilyBuildConfigReadOnly<P, T> = {
     path: string
     params: Fields<P>
-    get: DefaultFamily<P, T>
+    get: GetFamily<P, T>
 }
-
+export type ZoldyAtomFamilyBuildConfig<P, T> = {
+    set: SetFamily<P, T>
+} & ZoldyAtomFamilyBuildConfigReadOnly<P, T>
 
 
 export type ZoldyAtomFamilyStatic = {
-    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyAtomFamily<P, T>
-}
-
-
-
-
-export interface ZoldyAtomFamily<P, T> {
-    set(params: P, value: T): RakunMono<Void>;
-    get(params: P): RakunMono<T>;
+    <P, T>(config: ZoldyAtomFamilyBuildConfigReadOnly<P, T>): ZoldyValueFamily<P, T>
+    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyStateFamily<P, T>
 }
