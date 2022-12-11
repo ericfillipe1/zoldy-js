@@ -1,5 +1,5 @@
 import { Fields } from "../param/interface";
-import { ZoldyStateFamily } from "../source";
+import { ZoldyState } from "../source";
 import { DefaultFamily } from "../types";
 export type ZoldyAtomFamilyBuildConfig<P, T> = {
     path: string;
@@ -7,5 +7,5 @@ export type ZoldyAtomFamilyBuildConfig<P, T> = {
     default: DefaultFamily<P, T>;
 };
 export type ZoldyAtomFamilyStatic = {
-    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): ZoldyStateFamily<P, T>;
+    <P, T>(config: ZoldyAtomFamilyBuildConfig<P, T>): (params: P) => ZoldyState<T>;
 };

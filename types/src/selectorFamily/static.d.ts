@@ -1,3 +1,3 @@
 import { ZoldySelectorFamilyStatic } from "./interface";
-declare const atomfamily: ZoldySelectorFamilyStatic;
-export default atomfamily;
+declare const selectorFamily: ZoldySelectorFamilyStatic;
+export default selectorFamily;
