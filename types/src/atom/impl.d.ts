@@ -9,6 +9,7 @@ export declare class ZoldyAtomImpl<T> implements ZoldyState<T> {
     private _default;
     path: string;
     constructor(config: Config<T>);
-    set(value: T): RakunMono<Void>;
+    reset(): RakunMono<typeof Void>;
+    set(value: T): RakunMono<typeof Void>;
     get(): RakunMono<T>;
 }

@@ -13,6 +13,7 @@ export declare class ZoldySelectorStateImpl<T> implements ZoldyState<T> {
     private _set;
     get path(): string;
     constructor(config: ZoldySelectorBuildConfig<T>, zoldyValue: ZoldyValue<T>);
+    reset(): RakunMono<typeof Void>;
     get(): RakunMono<T>;
-    set(value: T): RakunMono<Void>;
+    set(value: T): RakunMono<typeof Void>;
 }

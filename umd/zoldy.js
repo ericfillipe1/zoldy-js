@@ -512,7 +512,7 @@
   }
 
   var WrappedValue_OPAQUE = Symbol();
-  var VoidValue = Symbol();
+  var Void = Symbol();
 
   function _arrayLikeToArray$1(arr, len) {
     if (len == null || len > arr.length) len = arr.length;
@@ -950,7 +950,7 @@
     }, {
       key: "then",
       value: function then(source) {
-        if (!source) return this.thenReturn(VoidValue);
+        if (!source) return this.thenReturn(Void);
         var sourceOld = this;
         return fromAsyncIterator(function (ctx) {
           var finish = false;
@@ -1368,10 +1368,10 @@
         });
       }
     }, {
-      key: "returnVoid",
-      value: function returnVoid() {
+      key: "then",
+      value: function then() {
         return fromCallback(function () {
-          return [VoidValue];
+          return [Void];
         });
       }
     }, {
@@ -1479,15 +1479,16 @@
           context: context,
           value: value
         }]);
-        return Promise.resolve(VoidValue);
+        return Promise.resolve(Void);
       }
     }]);
     return RakunContextManagerImpl;
   }();
 
   var fromSourceBuild$1 = function fromSourceBuild(sourceBuild) {
-    return new RakunMonoImpl(sourceBuild);
+    return new RakunFluxImpl(sourceBuild);
   };
+
   var RakunMonoImpl = /*#__PURE__*/function () {
     function RakunMonoImpl(sourceBuild) {
       _classCallCheck(this, RakunMonoImpl);
@@ -1495,6 +1496,17 @@
       _defineProperty(this, WrappedValue_OPAQUE, "mono");
     }
     _createClass(RakunMonoImpl, [{
+      key: "then",
+      value: function then(source) {
+        if (source) {
+          if (source[WrappedValue_OPAQUE] == 'flux') {
+            return fromSourceBuild$1(this.sourceBuild.then(source));
+          } else {
+            return fromSourceBuild(this.sourceBuild.then(source));
+          }
+        } else return fromSourceBuild(this.sourceBuild.then());
+      }
+    }, {
       key: "asyncIterator",
       value: function asyncIterator(ctx) {
         return this.sourceBuild.asyncIterator(ctx);
@@ -1502,59 +1514,54 @@
     }, {
       key: "onErrorResume",
       value: function onErrorResume(errorType, fn) {
-        return fromSourceBuild$1(this.sourceBuild.onErrorResume(errorType, fn));
+        return fromSourceBuild(this.sourceBuild.onErrorResume(errorType, fn));
       }
     }, {
       key: "doOnNext",
       value: function doOnNext(handler) {
-        return fromSourceBuild$1(this.sourceBuild.doOnNext(handler));
+        return fromSourceBuild(this.sourceBuild.doOnNext(handler));
       }
     }, {
       key: "doOnError",
       value: function doOnError(handler) {
-        return fromSourceBuild$1(this.sourceBuild.doOnError(handler));
+        return fromSourceBuild(this.sourceBuild.doOnError(handler));
       }
     }, {
       key: "switchIfEmpty",
       value: function switchIfEmpty(source) {
-        return fromSourceBuild$1(this.sourceBuild.switchIfEmpty(source));
+        return fromSourceBuild(this.sourceBuild.switchIfEmpty(source));
       }
     }, {
       key: "defaultIfEmpty",
       value: function defaultIfEmpty(value) {
-        return fromSourceBuild$1(this.sourceBuild.defaultIfEmpty(value));
+        return fromSourceBuild(this.sourceBuild.defaultIfEmpty(value));
       }
     }, {
       key: "zipWhen",
       value: function zipWhen() {
         var _this$sourceBuild;
-        return fromSourceBuild$1((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
+        return fromSourceBuild((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
       }
     }, {
       key: "zip",
       value: function zip() {
         var _this$sourceBuild2;
-        return fromSourceBuild$1((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
+        return fromSourceBuild((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
       }
     }, {
       key: "pipe",
       value: function pipe(fn) {
-        return fromSourceBuild$1(this.sourceBuild.pipe(fn));
+        return fromSourceBuild(this.sourceBuild.pipe(fn));
       }
     }, {
       key: "flatPipe",
       value: function flatPipe(fn) {
-        return fromSourceBuild$1(this.sourceBuild.flatPipe(fn));
+        return fromSourceBuild(this.sourceBuild.flatPipe(fn));
       }
     }, {
       key: "thenReturn",
       value: function thenReturn(value) {
-        return fromSourceBuild$1(this.sourceBuild.thenReturn(value));
-      }
-    }, {
-      key: "then",
-      value: function then(source) {
-        if (source) return fromSourceBuild$1(this.sourceBuild.then(source));else return fromSourceBuild$1(this.sourceBuild.then());
+        return fromSourceBuild(this.sourceBuild.thenReturn(value));
       }
     }, {
       key: "blockFirst",
@@ -1585,12 +1592,12 @@
     }, {
       key: "filter",
       value: function filter(fn) {
-        return fromSourceBuild$1(this.sourceBuild.filter(fn));
+        return fromSourceBuild(this.sourceBuild.filter(fn));
       }
     }, {
       key: "flatFilter",
       value: function flatFilter(fn) {
-        return fromSourceBuild$1(this.sourceBuild.flatFilter(fn));
+        return fromSourceBuild(this.sourceBuild.flatFilter(fn));
       }
     }, {
       key: "block",
@@ -1601,65 +1608,28 @@
     return RakunMonoImpl;
   }();
 
-  var StaticMonoImpl = /*#__PURE__*/function () {
-    function StaticMonoImpl() {
-      _classCallCheck(this, StaticMonoImpl);
-    }
-    _createClass(StaticMonoImpl, [{
-      key: "fromCallBack",
-      value: function fromCallBack() {
-        return this.fromSourceBuild(sourceBuild$1.fromCallback.apply(sourceBuild$1, arguments));
-      }
-    }, {
-      key: "fromSourceBuild",
-      value: function fromSourceBuild(p) {
-        return fromSourceBuild$1(p);
-      }
-    }, {
-      key: "returnVoid",
-      value: function returnVoid() {
-        return this.fromSourceBuild(sourceBuild$1.returnVoid());
-      }
-    }, {
-      key: "empty",
-      value: function empty() {
-        return this.fromSourceBuild(sourceBuild$1.empty());
-      }
-    }, {
-      key: "zip",
-      value: function zip() {
-        return this.fromSourceBuild(sourceBuild$1.zip.apply(sourceBuild$1, arguments));
-      }
-    }, {
-      key: "just",
-      value: function just(value) {
-        return this.fromSourceBuild(sourceBuild$1.just(value));
-      }
-    }, {
-      key: "fromPromise",
-      value: function fromPromise(promise) {
-        return this.fromSourceBuild(sourceBuild$1.just(promise));
-      }
-    }, {
-      key: "error",
-      value: function error(_error) {
-        return this.fromSourceBuild(sourceBuild$1.error(_error));
-      }
-    }]);
-    return StaticMonoImpl;
-  }();
-  var mono$1 = new StaticMonoImpl();
-
   var fromSourceBuild = function fromSourceBuild(sourceBuild) {
-    return new RakunFluxImpl(sourceBuild);
+    return new RakunMonoImpl(sourceBuild);
   };
+
   var RakunFluxImpl = /*#__PURE__*/function () {
     function RakunFluxImpl(sourceBuild) {
       _classCallCheck(this, RakunFluxImpl);
       this.sourceBuild = sourceBuild;
-      _defineProperty(this, WrappedValue_OPAQUE, "flux");
+      _defineProperty(this, WrappedValue_OPAQUE, 'flux');
     }
     _createClass(RakunFluxImpl, [{
+      key: "then",
+      value: function then(source) {
+        if (source) {
+          if (source[WrappedValue_OPAQUE] == 'mono') {
+            return fromSourceBuild(this.sourceBuild.then(source));
+          } else {
+            return fromSourceBuild$1(this.sourceBuild.then(source));
+          }
+        } else return fromSourceBuild$1(this.sourceBuild.then());
+      }
+    }, {
       key: "block",
       value: function block(contextManager) {
         return this.sourceBuild.block(contextManager !== null && contextManager !== void 0 ? contextManager : new RakunContextManagerImpl());
@@ -1668,7 +1638,7 @@
       key: "array",
       value: function array() {
         var _this = this;
-        return mono$1.fromSourceBuild(sourceBuild$1.fromCallback( /*#__PURE__*/function () {
+        return fromSourceBuild(sourceBuild$1.fromCallback( /*#__PURE__*/function () {
           var _ref = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee(ctx) {
             return regenerator$1.wrap(function _callee$(_context) {
               while (1) {
@@ -1699,59 +1669,59 @@
     }, {
       key: "switchIfEmpty",
       value: function switchIfEmpty(source) {
-        return fromSourceBuild(this.sourceBuild.switchIfEmpty(source));
+        return fromSourceBuild$1(this.sourceBuild.switchIfEmpty(source));
       }
     }, {
       key: "defaultIfEmpty",
       value: function defaultIfEmpty(value) {
-        return fromSourceBuild(this.sourceBuild.defaultIfEmpty(value));
+        return fromSourceBuild$1(this.sourceBuild.defaultIfEmpty(value));
       }
     }, {
       key: "onErrorResume",
       value: function onErrorResume(errorType, fn) {
-        return fromSourceBuild(this.sourceBuild.onErrorResume(errorType, fn));
+        return fromSourceBuild$1(this.sourceBuild.onErrorResume(errorType, fn));
       }
     }, {
       key: "doOnNext",
       value: function doOnNext(handler) {
-        return fromSourceBuild(this.sourceBuild.doOnNext(handler));
+        return fromSourceBuild$1(this.sourceBuild.doOnNext(handler));
       }
     }, {
       key: "doOnError",
       value: function doOnError(handler) {
-        return fromSourceBuild(this.sourceBuild.doOnError(handler));
+        return fromSourceBuild$1(this.sourceBuild.doOnError(handler));
       }
     }, {
       key: "zipWhen",
       value: function zipWhen() {
         var _this$sourceBuild;
-        return fromSourceBuild((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
+        return fromSourceBuild$1((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
       }
     }, {
       key: "zip",
       value: function zip() {
         var _this$sourceBuild2;
-        return fromSourceBuild((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
+        return fromSourceBuild$1((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
       }
     }, {
       key: "pipe",
       value: function pipe(fn) {
-        return fromSourceBuild(this.sourceBuild.pipe(fn));
+        return fromSourceBuild$1(this.sourceBuild.pipe(fn));
       }
     }, {
       key: "flatPipe",
       value: function flatPipe(fn) {
-        return fromSourceBuild(this.sourceBuild.flatPipe(fn));
+        return fromSourceBuild$1(this.sourceBuild.flatPipe(fn));
       }
     }, {
       key: "filter",
       value: function filter(fn) {
-        return fromSourceBuild(this.sourceBuild.filter(fn));
+        return fromSourceBuild$1(this.sourceBuild.filter(fn));
       }
     }, {
       key: "flatFilter",
       value: function flatFilter(fn) {
-        return fromSourceBuild(this.sourceBuild.flatFilter(fn));
+        return fromSourceBuild$1(this.sourceBuild.flatFilter(fn));
       }
     }, {
       key: "blockFirst",
@@ -1761,12 +1731,7 @@
     }, {
       key: "thenReturn",
       value: function thenReturn(value) {
-        return fromSourceBuild(this.sourceBuild.thenReturn(value));
-      }
-    }, {
-      key: "then",
-      value: function then(source) {
-        if (source) return fromSourceBuild(this.sourceBuild.then(source));else return fromSourceBuild(this.sourceBuild.then());
+        return fromSourceBuild$1(this.sourceBuild.thenReturn(value));
       }
     }]);
     return RakunFluxImpl;
@@ -1808,6 +1773,55 @@
     return RakunStaticFluxImpl;
   }();
   var flux$1 = new RakunStaticFluxImpl();
+
+  var StaticMonoImpl = /*#__PURE__*/function () {
+    function StaticMonoImpl() {
+      _classCallCheck(this, StaticMonoImpl);
+    }
+    _createClass(StaticMonoImpl, [{
+      key: "fromCallBack",
+      value: function fromCallBack() {
+        return this.fromSourceBuild(sourceBuild$1.fromCallback.apply(sourceBuild$1, arguments));
+      }
+    }, {
+      key: "fromSourceBuild",
+      value: function fromSourceBuild$1(p) {
+        return fromSourceBuild(p);
+      }
+    }, {
+      key: "then",
+      value: function then() {
+        return this.fromSourceBuild(sourceBuild$1.then());
+      }
+    }, {
+      key: "empty",
+      value: function empty() {
+        return this.fromSourceBuild(sourceBuild$1.empty());
+      }
+    }, {
+      key: "zip",
+      value: function zip() {
+        return this.fromSourceBuild(sourceBuild$1.zip.apply(sourceBuild$1, arguments));
+      }
+    }, {
+      key: "just",
+      value: function just(value) {
+        return this.fromSourceBuild(sourceBuild$1.just(value));
+      }
+    }, {
+      key: "fromPromise",
+      value: function fromPromise(promise) {
+        return this.fromSourceBuild(sourceBuild$1.just(promise));
+      }
+    }, {
+      key: "error",
+      value: function error(_error) {
+        return this.fromSourceBuild(sourceBuild$1.error(_error));
+      }
+    }]);
+    return StaticMonoImpl;
+  }();
+  var mono$1 = new StaticMonoImpl();
 
   var RakunContextImpl = /*#__PURE__*/function () {
     function RakunContextImpl(defualtValue) {
@@ -1854,6 +1868,70 @@
   var zoldyPathParentProvider = context.create(null);
   var zoldySnapshotProvider = context.create(null);
 
+  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+      var info = gen[key](arg);
+      var value = info.value;
+    } catch (error) {
+      reject(error);
+      return;
+    }
+    if (info.done) {
+      resolve(value);
+    } else {
+      Promise.resolve(value).then(_next, _throw);
+    }
+  }
+  function _asyncToGenerator(fn) {
+    return function () {
+      var self = this,
+        args = arguments;
+      return new Promise(function (resolve, reject) {
+        var gen = fn.apply(self, args);
+        function _next(value) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+        }
+        function _throw(err) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+        }
+        _next(undefined);
+      });
+    };
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) {
+      arr2[i] = arr[i];
+    }
+    return arr2;
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
+
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
   }
@@ -1888,76 +1966,12 @@
     }
   }
 
-  function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-    for (var i = 0, arr2 = new Array(len); i < len; i++) {
-      arr2[i] = arr[i];
-    }
-    return arr2;
-  }
-
-  function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-  }
-
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-  }
-
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-      var info = gen[key](arg);
-      var value = info.value;
-    } catch (error) {
-      reject(error);
-      return;
-    }
-    if (info.done) {
-      resolve(value);
-    } else {
-      Promise.resolve(value).then(_next, _throw);
-    }
-  }
-  function _asyncToGenerator(fn) {
-    return function () {
-      var self = this,
-        args = arguments;
-      return new Promise(function (resolve, reject) {
-        var gen = fn.apply(self, args);
-        function _next(value) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-        }
-        function _throw(err) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-        }
-        _next(undefined);
-      });
-    };
-  }
-
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-  }
-
-  function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
-  }
-
-  function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
   function createCommonjsModule(fn) {
@@ -2316,6 +2330,26 @@
       _defineProperty$1(this, "cache", {});
     }
     _createClass$1(ZoldySnapshotImpl, [{
+      key: "cleanCache",
+      value: function cleanCache(path) {
+        var snapshot = this;
+        return snapshot.getCacheValue(path).flatPipe(function (_ref) {
+          var _snapshot$cache$path;
+          _slicedToArray(_ref, 0);
+          snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path = snapshot.cache[path]) !== null && _snapshot$cache$path !== void 0 ? _snapshot$cache$path : {
+            state: "cleanValue"
+          }), {}, {
+            value: null,
+            version: version
+          });
+          if (snapshot.parent) {
+            return snapshot.parent.cleanCache(path);
+          } else {
+            return mono.then();
+          }
+        });
+      }
+    }, {
       key: "addDependency",
       value: function addDependency(path, dependency) {
         var snapshot = this;
@@ -2325,7 +2359,7 @@
               return snapshot.setDependency(path, [].concat(_toConsumableArray(array), [dependency]));
             });
           }
-          return mono.returnVoid();
+          return mono.then();
         });
       }
     }, {
@@ -2333,13 +2367,13 @@
       value: function hasDependency(path, dependency) {
         var snapshot = this;
         return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-          var _snapshot$cache$path$, _snapshot$cache$path;
+          var _snapshot$cache$path$, _snapshot$cache$path2;
           var dependencies;
           return regenerator.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  dependencies = (_snapshot$cache$path$ = (_snapshot$cache$path = snapshot.cache[path]) === null || _snapshot$cache$path === void 0 ? void 0 : _snapshot$cache$path.dependencies) !== null && _snapshot$cache$path$ !== void 0 ? _snapshot$cache$path$ : [];
+                  dependencies = (_snapshot$cache$path$ = (_snapshot$cache$path2 = snapshot.cache[path]) === null || _snapshot$cache$path2 === void 0 ? void 0 : _snapshot$cache$path2.dependencies) !== null && _snapshot$cache$path$ !== void 0 ? _snapshot$cache$path$ : [];
                   return _context.abrupt("return", [dependencies.includes(dependency)]);
                 case 2:
                 case "end":
@@ -2354,17 +2388,17 @@
       value: function setDependency(path, dependencies) {
         var snapshot = this;
         return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-          var _snapshot$cache$path2;
+          var _snapshot$cache$path3;
           return regenerator.wrap(function _callee2$(_context2) {
             while (1) {
               switch (_context2.prev = _context2.next) {
                 case 0:
-                  snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path2 = snapshot.cache[path]) !== null && _snapshot$cache$path2 !== void 0 ? _snapshot$cache$path2 : {
+                  snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path3 = snapshot.cache[path]) !== null && _snapshot$cache$path3 !== void 0 ? _snapshot$cache$path3 : {
                     state: "noValue"
                   }), {}, {
                     dependencies: dependencies
                   });
-                  return _context2.abrupt("return", [VoidValue]);
+                  return _context2.abrupt("return", [Void]);
                 case 2:
                 case "end":
                   return _context2.stop();
@@ -2399,12 +2433,12 @@
       value: function hasCacheState(path) {
         var snapshot = this;
         return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4() {
-          var _snapshot$cache$path$2, _snapshot$cache$path3;
+          var _snapshot$cache$path$2, _snapshot$cache$path4;
           return regenerator.wrap(function _callee4$(_context4) {
             while (1) {
               switch (_context4.prev = _context4.next) {
                 case 0:
-                  return _context4.abrupt("return", [(_snapshot$cache$path$2 = (_snapshot$cache$path3 = snapshot.cache[path]) === null || _snapshot$cache$path3 === void 0 ? void 0 : _snapshot$cache$path3.state) !== null && _snapshot$cache$path$2 !== void 0 ? _snapshot$cache$path$2 : "noValue"]);
+                  return _context4.abrupt("return", [(_snapshot$cache$path$2 = (_snapshot$cache$path4 = snapshot.cache[path]) === null || _snapshot$cache$path4 === void 0 ? void 0 : _snapshot$cache$path4.state) !== null && _snapshot$cache$path$2 !== void 0 ? _snapshot$cache$path$2 : "noValue"]);
                 case 1:
                 case "end":
                   return _context4.stop();
@@ -2418,19 +2452,19 @@
       value: function setCacheValue(path, value) {
         var snapshot = this;
         return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
-          var _snapshot$cache$path4;
+          var _snapshot$cache$path5;
           return regenerator.wrap(function _callee5$(_context5) {
             while (1) {
               switch (_context5.prev = _context5.next) {
                 case 0:
                   version = version + 1;
-                  snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path4 = snapshot.cache[path]) !== null && _snapshot$cache$path4 !== void 0 ? _snapshot$cache$path4 : {
+                  snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path5 = snapshot.cache[path]) !== null && _snapshot$cache$path5 !== void 0 ? _snapshot$cache$path5 : {
                     state: "hasValue"
                   }), {}, {
                     value: value,
                     version: version
                   });
-                  return _context5.abrupt("return", [VoidValue]);
+                  return _context5.abrupt("return", [Void]);
                 case 3:
                 case "end":
                   return _context5.stop();
@@ -2444,24 +2478,24 @@
       value: function getCacheValue(path) {
         var snapshot = this;
         return this.hasCacheState(path).flatPipe(function (state) {
-          var _snapshot$cache$path5;
+          var _snapshot$cache$path6;
           if (state == 'noValue' && snapshot.parent) {
             return snapshot.parent.getCacheValue(path);
           }
-          var value = (_snapshot$cache$path5 = snapshot.cache[path]) === null || _snapshot$cache$path5 === void 0 ? void 0 : _snapshot$cache$path5.value;
+          var value = (_snapshot$cache$path6 = snapshot.cache[path]) === null || _snapshot$cache$path6 === void 0 ? void 0 : _snapshot$cache$path6.value;
           return mono.just([state, value]);
         });
       }
     }, {
       key: "get",
-      value: function get(_ref6) {
-        var _get = _ref6.get,
-          path = _ref6.path;
+      value: function get(_ref8) {
+        var _get = _ref8.get,
+          path = _ref8.path;
         var snapshot = this;
-        return snapshot.getCacheValue(path).flatPipe(function (_ref7) {
-          var _ref8 = _slicedToArray(_ref7, 2),
-            state = _ref8[0],
-            value = _ref8[1];
+        return snapshot.getCacheValue(path).flatPipe(function (_ref9) {
+          var _ref10 = _slicedToArray(_ref9, 2),
+            state = _ref10[0],
+            value = _ref10[1];
           if (state == "hasValue") {
             return mono.just(value);
           } else {
@@ -2473,9 +2507,9 @@
       }
     }, {
       key: "set",
-      value: function set(_ref9) {
-        var path = _ref9.path,
-          value = _ref9.value;
+      value: function set(_ref11) {
+        var path = _ref11.path,
+          value = _ref11.value;
         return this.setCacheValue(path, value);
       }
     }]);
@@ -2498,6 +2532,14 @@
       this._default = config['default'];
     }
     _createClass$1(ZoldyAtomImpl, [{
+      key: "reset",
+      value: function reset() {
+        var path = this.path;
+        return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
+          return zoldyContext.cleanCache(path);
+        });
+      }
+    }, {
       key: "set",
       value: function set(value) {
         var path = this.path;
@@ -2624,6 +2666,14 @@
         return this.zoldyValue.path;
       }
     }, {
+      key: "reset",
+      value: function reset() {
+        var path = this.path;
+        return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
+          return zoldyContext.cleanCache(path);
+        });
+      }
+    }, {
       key: "get",
       value: function get() {
         return this.zoldyValue.get();
@@ -2655,6 +2705,70 @@
     };
   };
 
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+    return _setPrototypeOf(o, p);
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        writable: true,
+        configurable: true
+      }
+    });
+    Object.defineProperty(subClass, "prototype", {
+      writable: false
+    });
+    if (superClass) _setPrototypeOf(subClass, superClass);
+  }
+
+  function _assertThisInitialized(self) {
+    if (self === void 0) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+    return self;
+  }
+
+  function _possibleConstructorReturn(self, call) {
+    if (call && (_typeof$1(call) === "object" || typeof call === "function")) {
+      return call;
+    } else if (call !== void 0) {
+      throw new TypeError("Derived constructors may only return object or undefined");
+    }
+    return _assertThisInitialized(self);
+  }
+
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+  function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+  var ZoldyValue = /*#__PURE__*/_createClass$1(function ZoldyValue() {
+    _classCallCheck$1(this, ZoldyValue);
+    _defineProperty$1(this, "path", void 0);
+  });
+  var ZoldyState = /*#__PURE__*/function (_ZoldyValue) {
+    _inherits(ZoldyState, _ZoldyValue);
+    var _super = _createSuper(ZoldyState);
+    function ZoldyState() {
+      _classCallCheck$1(this, ZoldyState);
+      return _super.apply(this, arguments);
+    }
+    return _createClass$1(ZoldyState);
+  }(ZoldyValue);
+
   var index = {
     atomFamily: atomfamily,
     atom: atom$1,
@@ -2665,6 +2779,8 @@
   var selector = selector$1;
   var selectorFamily = selectorFamily$1;
 
+  exports.ZoldyState = ZoldyState;
+  exports.ZoldyValue = ZoldyValue;
   exports.atom = atom;
   exports.atomFamily = atomFamily;
   exports.createSnapshot = createSnapshot;
