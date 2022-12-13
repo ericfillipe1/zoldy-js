@@ -18,8 +18,17 @@ export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
         this.path = config['path'];
         this._default = config['default'];
     }
+    reset(): RakunMono<typeof Void> {
+        var path = this.path
+        return zoldySnapshotProvider.get()
+            .flatPipe(getSnapshotOrThrow)
+            .flatPipe(zoldyContext => {
+                return zoldyContext
+                    .cleanCache(path);
+            })
+    }
 
-    set(value: T): RakunMono<Void> {
+    set(value: T): RakunMono<typeof Void> {
         var path = this.path
         return zoldySnapshotProvider.get()
             .flatPipe(getSnapshotOrThrow)

@@ -1,4 +1,4 @@
-import { RakunMono, Void, mono, RakunFlux, VoidValue, flux } from "rakun";
+import { RakunMono, Void, mono, RakunFlux, flux } from "rakun";
 import { GetParams, SetParams, ZoldySnapshot, ZoldySnapshotCache, ZoldySnapshotCacheState } from "./interface";
 let version = 0
 export class ZoldySnapshotImpl implements ZoldySnapshot {
@@ -6,7 +6,24 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
     constructor(public parent: ZoldySnapshot | null) {
 
     }
-    addDependency(path: string, dependency: string): RakunMono<Void> {
+    cleanCache(path: string): RakunMono<typeof Void> {
+        const snapshot = this;
+        return snapshot.getCacheValue(path)
+            .flatPipe(([]) => {
+                snapshot.cache[path] = {
+                    ...snapshot.cache[path] ?? { state: "cleanValue" },
+                    value: null,
+                    version: version
+                }
+                if (snapshot.parent) {
+                    return snapshot.parent.cleanCache(path)
+                } else {
+                    return mono.then();
+                }
+
+            });
+    }
+    addDependency(path: string, dependency: string): RakunMono<typeof Void> {
         const snapshot = this;
         return snapshot.hasDependency(path, dependency)
             .flatPipe(b => {
@@ -15,7 +32,7 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
                         .array()
                         .flatPipe(array => snapshot.setDependency(path, [...array, dependency]))
                 }
-                return mono.returnVoid()
+                return mono.then()
             })
     }
     hasDependency(path: string, dependency: string): RakunMono<boolean> {
@@ -25,14 +42,14 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
             return [dependencies.includes(dependency)]
         });
     }
-    setDependency(path: string, dependencies: string[]): RakunMono<Void> {
+    setDependency(path: string, dependencies: string[]): RakunMono<typeof Void> {
         const snapshot = this;
         return mono.fromCallBack(async () => {
             snapshot.cache[path] = {
                 ...snapshot.cache[path] ?? { state: "noValue" },
                 dependencies
             }
-            return [VoidValue]
+            return [Void]
         });
     }
     getDependencies(path: string): RakunFlux<string> {
@@ -47,7 +64,7 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
             return [snapshot.cache[path]?.state ?? "noValue"]
         });
     }
-    setCacheValue(path: string, value: any): RakunMono<Void> {
+    setCacheValue(path: string, value: any): RakunMono<typeof Void> {
         const snapshot = this;
         return mono.fromCallBack(async () => {
             version = version + 1
@@ -56,7 +73,7 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
                 value: value,
                 version: version
             }
-            return [VoidValue]
+            return [Void]
         });
     }
     getCacheValue(path: string): RakunMono<[ZoldySnapshotCacheState, any]> {
@@ -85,7 +102,7 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
                 }
             });
     }
-    set({ path, value }: SetParams): RakunMono<Void> {
+    set({ path, value }: SetParams): RakunMono<typeof Void> {
         return this.setCacheValue(path, value)
     }
 

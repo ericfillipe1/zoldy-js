@@ -38,10 +38,18 @@ export class ZoldySelectorStateImpl<T> implements ZoldyState<T>  {
     constructor(config: ZoldySelectorBuildConfig<T>, private zoldyValue: ZoldyValue<T>) {
         this._set = config.set
     }
+    reset(): RakunMono<typeof Void> {
+        var path = this.path
+        return zoldySnapshotProvider.get()
+            .flatPipe(getSnapshotOrThrow)
+            .flatPipe(zoldyContext => {
+                return zoldyContext.cleanCache(path);
+            })
+    }
     get(): RakunMono<T> {
         return this.zoldyValue.get();
     }
-    set(value: T): RakunMono<Void> {
+    set(value: T): RakunMono<typeof Void> {
 
         return this._set(value);
     }

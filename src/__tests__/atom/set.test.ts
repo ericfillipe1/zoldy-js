@@ -1,4 +1,4 @@
-import { mono, VoidValue } from "rakun";
+import { mono, Void } from "rakun";
 import atom from "../../atom";
 import { ZoldySnapshotImpl } from "../../snapshot/impl";
 import { zoldySnapshotProvider } from "../../snapshot/provider";
@@ -24,7 +24,7 @@ describe('atom set', () => {
             .pipe(([v1, v2]) => [...v1, v2])
             .blockFirst()
         expect(result).toStrictEqual([
-            VoidValue,
+            Void,
             {
                 users: {
                     state: "hasValue",
@@ -32,7 +32,7 @@ describe('atom set', () => {
                     version: 1
                 }
             },
-            VoidValue,
+            Void,
             {
                 users: {
                     state: "hasValue",

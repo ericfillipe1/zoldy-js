@@ -6,5 +6,6 @@ export abstract class ZoldyValue<T> {
 }
 
 export abstract class ZoldyState<T> extends ZoldyValue<T> {
-    abstract set(value: T): RakunMono<Void>
+    abstract set(value: T): RakunMono<typeof Void>
+    abstract reset(): RakunMono<typeof Void>
 }
