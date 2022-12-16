@@ -1,6 +1,6 @@
 
 import { mono, RakunMono } from "rakun";
-import { ZoldySnapshotImpl } from "./impl";
+import { ZoldySnapshotCacheImpl, ZoldySnapshotImpl } from "./impl";
 import { ZoldySnapshot } from "./interface";
 
 
@@ -10,5 +10,5 @@ export const getSnapshotOrThrow = (zoldyContext: ZoldySnapshot | null): RakunMon
         mono.error(new Error("NotFound ZoldySnapshot"));
 }
 export const createSnapshot = (parent: ZoldySnapshot | null): ZoldySnapshot => {
-    return new ZoldySnapshotImpl(parent);
+    return new ZoldySnapshotImpl(new ZoldySnapshotCacheImpl({}), parent);
 }

@@ -1,4 +1,4 @@
-import { RakunFlux, RakunMono, Void } from "rakun"
+import { RakunMono, Void } from "rakun"
 export type GetParams = {
     path: string, get: () => RakunMono<any>;
 }
@@ -8,27 +8,42 @@ export type SetParams = {
 
 export type ZoldySnapshotCacheState = "hasValue" | "noValue" | "cleanValue"
 
-export type ZoldySnapshotCache = {
+
+export type ZoldySnapshotCacheDataItem = {
+    value: any
+    version: number
+    state: ZoldySnapshotCacheState
+    dependencies: string[]
+}
+
+export type ZoldySnapshotCacheData = {
     [path: string]: {
         value: any
         version: number
         state: ZoldySnapshotCacheState
-        dependencies: any
+        dependencies: string[]
     }
 }
 
 
 export interface ZoldySnapshot {
-    cleanCache(path: string): RakunMono<typeof Void>;
     parent: ZoldySnapshot | null
-    hasCacheState(path: string): RakunMono<ZoldySnapshotCacheState>
-    setCacheValue(path: string, value: any): RakunMono<typeof Void>
     getCacheValue(path: string): RakunMono<[ZoldySnapshotCacheState, any]>
-    addDependency(path: string, dependency: string): RakunMono<typeof Void>
-    hasDependency(path: string, dependency: string): RakunMono<boolean>
-    setDependency(path: string, dependencies: string[]): RakunMono<typeof Void>
-    getDependencies(path: string): RakunFlux<string>
+    cleanCache(path: string): RakunMono<typeof Void>;
     get(params: GetParams): RakunMono<any>
     set({ path, value }: SetParams): RakunMono<typeof Void>
+}
+
+
+export interface ZoldySnapshotCache {
+    getValue(path: string): any | null
+    getState(path: string): ZoldySnapshotCacheState
+    addDependency(path: string, dependency: string): void
+    hasDependency(path: string, dependency: string): boolean
+    setCacheValue(path: string, value: any): void
+    getDependencies(path: string): string[]
+    setDependency(path: string, dependencies: string[]): void
+    get(path: string): any
+    cleanCache(path: string): void
 }
 

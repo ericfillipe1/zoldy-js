@@ -14,7 +14,7 @@
             // ^^ modified line ^^
             "cwd": "${workspaceFolder}",
             "args": [
-                "src/__tests__/atomFamily/set.test.ts",
+                "src/__tests__/atom/reset.test.ts",
             ]
         }
     ]
