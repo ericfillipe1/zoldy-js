@@ -1,6 +1,6 @@
 {
   "name": "zoldy",
-  "version": "0.0.0-alpha.7",
+  "version": "0.0.0-alpha.8",
   "description": "",
   "types": "./types/src/index.d.ts",
   "main": "cjs/zoldy.js",
@@ -97,6 +97,10 @@
     "yup": "^0.32.9"
   },
   "peerDependencies": {
-    "rakun": "0.0.0-alpha.32"
+    "rakun": "0.0.0-alpha.35"
+  },
+  "dependencies": {
+    "emittery": "^1.0.1",
+    "immer": "^9.0.16"
   }
 }

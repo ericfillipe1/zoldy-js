@@ -1,5 +1,4 @@
-import { ZoldyState } from "../source";
-import { Default } from "../types";
+import { Default, ZoldyState } from "../types";
 export interface ZoldyAtomStatic {
     <T>(path: ZoldyAtomBuildConfig<T>): ZoldyState<T>;
 }

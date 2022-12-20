@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 function _classCallCheck$1(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -508,7 +510,7 @@ try {
 var WrappedValue_OPAQUE = Symbol();
 var Void = Symbol();
 
-function _arrayLikeToArray$1(arr, len) {
+function _arrayLikeToArray$2(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
     arr2[i] = arr[i];
@@ -517,20 +519,20 @@ function _arrayLikeToArray$1(arr, len) {
 }
 
 function _arrayWithoutHoles$1(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray$1(arr);
+  if (Array.isArray(arr)) return _arrayLikeToArray$2(arr);
 }
 
 function _iterableToArray$1(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 
-function _unsupportedIterableToArray$1(o, minLen) {
+function _unsupportedIterableToArray$2(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$2(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$2(o, minLen);
 }
 
 function _nonIterableSpread$1() {
@@ -538,7 +540,7 @@ function _nonIterableSpread$1() {
 }
 
 function _toConsumableArray$1(arr) {
-  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableSpread$1();
+  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$2(arr) || _nonIterableSpread$1();
 }
 
 function _arrayWithHoles$1(arr) {
@@ -550,7 +552,7 @@ function _nonIterableRest$1() {
 }
 
 function _toArray$1(arr) {
-  return _arrayWithHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableRest$1();
+  return _arrayWithHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$2(arr) || _nonIterableRest$1();
 }
 
 function _asyncIterator(iterable) { var method, async, sync, retry = 2; for ("undefined" != typeof Symbol && (async = Symbol.asyncIterator, sync = Symbol.iterator); retry--;) { if (async && null != (method = iterable[async])) return method.call(iterable); if (sync && null != (method = iterable[sync])) return new AsyncFromSyncIterator(method.call(iterable)); async = "@@asyncIterator", sync = "@@iterator"; } throw new TypeError("Object is not async iterable"); }
@@ -1479,10 +1481,6 @@ var RakunContextManagerImpl = /*#__PURE__*/function () {
   return RakunContextManagerImpl;
 }();
 
-var fromSourceBuild$1 = function fromSourceBuild(sourceBuild) {
-  return new RakunFluxImpl(sourceBuild);
-};
-
 var RakunMonoImpl = /*#__PURE__*/function () {
   function RakunMonoImpl(sourceBuild) {
     _classCallCheck(this, RakunMonoImpl);
@@ -1490,15 +1488,20 @@ var RakunMonoImpl = /*#__PURE__*/function () {
     _defineProperty(this, WrappedValue_OPAQUE, "mono");
   }
   _createClass(RakunMonoImpl, [{
+    key: "flatPipeMany",
+    value: function flatPipeMany(fn) {
+      return fromSourceBuild(this.sourceBuild.flatPipe(fn));
+    }
+  }, {
     key: "then",
     value: function then(source) {
       if (source) {
         if (source[WrappedValue_OPAQUE] == 'flux') {
-          return fromSourceBuild$1(this.sourceBuild.then(source));
-        } else {
           return fromSourceBuild(this.sourceBuild.then(source));
+        } else {
+          return fromSourceBuild$1(this.sourceBuild.then(source));
         }
-      } else return fromSourceBuild(this.sourceBuild.then());
+      } else return fromSourceBuild$1(this.sourceBuild.then());
     }
   }, {
     key: "asyncIterator",
@@ -1508,54 +1511,54 @@ var RakunMonoImpl = /*#__PURE__*/function () {
   }, {
     key: "onErrorResume",
     value: function onErrorResume(errorType, fn) {
-      return fromSourceBuild(this.sourceBuild.onErrorResume(errorType, fn));
+      return fromSourceBuild$1(this.sourceBuild.onErrorResume(errorType, fn));
     }
   }, {
     key: "doOnNext",
     value: function doOnNext(handler) {
-      return fromSourceBuild(this.sourceBuild.doOnNext(handler));
+      return fromSourceBuild$1(this.sourceBuild.doOnNext(handler));
     }
   }, {
     key: "doOnError",
     value: function doOnError(handler) {
-      return fromSourceBuild(this.sourceBuild.doOnError(handler));
+      return fromSourceBuild$1(this.sourceBuild.doOnError(handler));
     }
   }, {
     key: "switchIfEmpty",
     value: function switchIfEmpty(source) {
-      return fromSourceBuild(this.sourceBuild.switchIfEmpty(source));
+      return fromSourceBuild$1(this.sourceBuild.switchIfEmpty(source));
     }
   }, {
     key: "defaultIfEmpty",
     value: function defaultIfEmpty(value) {
-      return fromSourceBuild(this.sourceBuild.defaultIfEmpty(value));
+      return fromSourceBuild$1(this.sourceBuild.defaultIfEmpty(value));
     }
   }, {
     key: "zipWhen",
     value: function zipWhen() {
       var _this$sourceBuild;
-      return fromSourceBuild((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
+      return fromSourceBuild$1((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
     }
   }, {
     key: "zip",
     value: function zip() {
       var _this$sourceBuild2;
-      return fromSourceBuild((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
+      return fromSourceBuild$1((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
     }
   }, {
     key: "pipe",
     value: function pipe(fn) {
-      return fromSourceBuild(this.sourceBuild.pipe(fn));
+      return fromSourceBuild$1(this.sourceBuild.pipe(fn));
     }
   }, {
     key: "flatPipe",
     value: function flatPipe(fn) {
-      return fromSourceBuild(this.sourceBuild.flatPipe(fn));
+      return fromSourceBuild$1(this.sourceBuild.flatPipe(fn));
     }
   }, {
     key: "thenReturn",
     value: function thenReturn(value) {
-      return fromSourceBuild(this.sourceBuild.thenReturn(value));
+      return fromSourceBuild$1(this.sourceBuild.thenReturn(value));
     }
   }, {
     key: "blockFirst",
@@ -1586,12 +1589,12 @@ var RakunMonoImpl = /*#__PURE__*/function () {
   }, {
     key: "filter",
     value: function filter(fn) {
-      return fromSourceBuild(this.sourceBuild.filter(fn));
+      return fromSourceBuild$1(this.sourceBuild.filter(fn));
     }
   }, {
     key: "flatFilter",
     value: function flatFilter(fn) {
-      return fromSourceBuild(this.sourceBuild.flatFilter(fn));
+      return fromSourceBuild$1(this.sourceBuild.flatFilter(fn));
     }
   }, {
     key: "block",
@@ -1602,7 +1605,7 @@ var RakunMonoImpl = /*#__PURE__*/function () {
   return RakunMonoImpl;
 }();
 
-var fromSourceBuild = function fromSourceBuild(sourceBuild) {
+var fromSourceBuild$1 = function fromSourceBuild(sourceBuild) {
   return new RakunMonoImpl(sourceBuild);
 };
 
@@ -1617,9 +1620,9 @@ var RakunFluxImpl = /*#__PURE__*/function () {
     value: function then(source) {
       if (source) {
         if (source[WrappedValue_OPAQUE] == 'mono') {
-          return fromSourceBuild(this.sourceBuild.then(source));
-        } else {
           return fromSourceBuild$1(this.sourceBuild.then(source));
+        } else {
+          return fromSourceBuild(this.sourceBuild.then(source));
         }
       } else return fromSourceBuild$1(this.sourceBuild.then());
     }
@@ -1632,7 +1635,7 @@ var RakunFluxImpl = /*#__PURE__*/function () {
     key: "array",
     value: function array() {
       var _this = this;
-      return fromSourceBuild(sourceBuild$1.fromCallback( /*#__PURE__*/function () {
+      return fromSourceBuild$1(sourceBuild$1.fromCallback( /*#__PURE__*/function () {
         var _ref = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee(ctx) {
           return regenerator$1.wrap(function _callee$(_context) {
             while (1) {
@@ -1663,59 +1666,59 @@ var RakunFluxImpl = /*#__PURE__*/function () {
   }, {
     key: "switchIfEmpty",
     value: function switchIfEmpty(source) {
-      return fromSourceBuild$1(this.sourceBuild.switchIfEmpty(source));
+      return fromSourceBuild(this.sourceBuild.switchIfEmpty(source));
     }
   }, {
     key: "defaultIfEmpty",
     value: function defaultIfEmpty(value) {
-      return fromSourceBuild$1(this.sourceBuild.defaultIfEmpty(value));
+      return fromSourceBuild(this.sourceBuild.defaultIfEmpty(value));
     }
   }, {
     key: "onErrorResume",
     value: function onErrorResume(errorType, fn) {
-      return fromSourceBuild$1(this.sourceBuild.onErrorResume(errorType, fn));
+      return fromSourceBuild(this.sourceBuild.onErrorResume(errorType, fn));
     }
   }, {
     key: "doOnNext",
     value: function doOnNext(handler) {
-      return fromSourceBuild$1(this.sourceBuild.doOnNext(handler));
+      return fromSourceBuild(this.sourceBuild.doOnNext(handler));
     }
   }, {
     key: "doOnError",
     value: function doOnError(handler) {
-      return fromSourceBuild$1(this.sourceBuild.doOnError(handler));
+      return fromSourceBuild(this.sourceBuild.doOnError(handler));
     }
   }, {
     key: "zipWhen",
     value: function zipWhen() {
       var _this$sourceBuild;
-      return fromSourceBuild$1((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
+      return fromSourceBuild((_this$sourceBuild = this.sourceBuild).zipWhen.apply(_this$sourceBuild, arguments));
     }
   }, {
     key: "zip",
     value: function zip() {
       var _this$sourceBuild2;
-      return fromSourceBuild$1((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
+      return fromSourceBuild((_this$sourceBuild2 = this.sourceBuild).zip.apply(_this$sourceBuild2, arguments));
     }
   }, {
     key: "pipe",
     value: function pipe(fn) {
-      return fromSourceBuild$1(this.sourceBuild.pipe(fn));
+      return fromSourceBuild(this.sourceBuild.pipe(fn));
     }
   }, {
     key: "flatPipe",
     value: function flatPipe(fn) {
-      return fromSourceBuild$1(this.sourceBuild.flatPipe(fn));
+      return fromSourceBuild(this.sourceBuild.flatPipe(fn));
     }
   }, {
     key: "filter",
     value: function filter(fn) {
-      return fromSourceBuild$1(this.sourceBuild.filter(fn));
+      return fromSourceBuild(this.sourceBuild.filter(fn));
     }
   }, {
     key: "flatFilter",
     value: function flatFilter(fn) {
-      return fromSourceBuild$1(this.sourceBuild.flatFilter(fn));
+      return fromSourceBuild(this.sourceBuild.flatFilter(fn));
     }
   }, {
     key: "blockFirst",
@@ -1725,35 +1728,35 @@ var RakunFluxImpl = /*#__PURE__*/function () {
   }, {
     key: "thenReturn",
     value: function thenReturn(value) {
-      return fromSourceBuild$1(this.sourceBuild.thenReturn(value));
+      return fromSourceBuild(this.sourceBuild.thenReturn(value));
     }
   }]);
   return RakunFluxImpl;
 }();
 
+var fromSourceBuild = function fromSourceBuild(sourceBuild) {
+  return new RakunFluxImpl(sourceBuild);
+};
+
 var RakunStaticFluxImpl = /*#__PURE__*/function () {
   function RakunStaticFluxImpl() {
     _classCallCheck(this, RakunStaticFluxImpl);
+    _defineProperty(this, "fromSourceBuild", fromSourceBuild);
   }
   _createClass(RakunStaticFluxImpl, [{
     key: "fromCallBack",
     value: function fromCallBack() {
-      return this.fromSourceBuild(sourceBuild$1.fromCallback.apply(sourceBuild$1, arguments));
-    }
-  }, {
-    key: "fromSourceBuild",
-    value: function fromSourceBuild(sourceBuild) {
-      return new RakunFluxImpl(sourceBuild);
+      return fromSourceBuild(sourceBuild$1.fromCallback.apply(sourceBuild$1, arguments));
     }
   }, {
     key: "fromPromise",
     value: function fromPromise(promise) {
-      return this.fromSourceBuild(sourceBuild$1.fromArray(promise));
+      return fromSourceBuild(sourceBuild$1.fromArray(promise));
     }
   }, {
     key: "fromArray",
     value: function fromArray(values) {
-      return this.fromSourceBuild(sourceBuild$1.fromArray(values));
+      return fromSourceBuild(sourceBuild$1.fromArray(values));
     }
   }, {
     key: "just",
@@ -1761,7 +1764,7 @@ var RakunStaticFluxImpl = /*#__PURE__*/function () {
       for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
         values[_key] = arguments[_key];
       }
-      return this.fromSourceBuild(sourceBuild$1.fromArray(values));
+      return fromSourceBuild(sourceBuild$1.fromArray(values));
     }
   }]);
   return RakunStaticFluxImpl;
@@ -1771,16 +1774,12 @@ var flux$1 = new RakunStaticFluxImpl();
 var StaticMonoImpl = /*#__PURE__*/function () {
   function StaticMonoImpl() {
     _classCallCheck(this, StaticMonoImpl);
+    _defineProperty(this, "fromSourceBuild", fromSourceBuild$1);
   }
   _createClass(StaticMonoImpl, [{
     key: "fromCallBack",
     value: function fromCallBack() {
       return this.fromSourceBuild(sourceBuild$1.fromCallback.apply(sourceBuild$1, arguments));
-    }
-  }, {
-    key: "fromSourceBuild",
-    value: function fromSourceBuild$1(p) {
-      return fromSourceBuild(p);
     }
   }, {
     key: "then",
@@ -1893,39 +1892,6 @@ function _asyncToGenerator(fn) {
   };
 }
 
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-  return arr2;
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
@@ -1960,12 +1926,45 @@ function _iterableToArrayLimit(arr, i) {
   }
 }
 
+function _arrayLikeToArray$1(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+  return arr2;
+}
+
+function _unsupportedIterableToArray$1(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
+}
+
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray$1(arr, i) || _nonIterableRest();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray$1(arr);
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableSpread();
 }
 
 function createCommonjsModule(fn) {
@@ -2314,61 +2313,209 @@ try {
   }
 }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty$1(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-var version = 0;
-var ZoldySnapshotImpl = /*#__PURE__*/function () {
-  function ZoldySnapshotImpl(parent) {
-    _classCallCheck$1(this, ZoldySnapshotImpl);
-    this.parent = parent;
-    _defineProperty$1(this, "cache", {});
+function n(n){for(var r=arguments.length,t=Array(r>1?r-1:0),e=1;e<r;e++)t[e-1]=arguments[e];if("production"!==process.env.NODE_ENV){var i=Y[n],o=i?"function"==typeof i?i.apply(null,t):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(t.length?" "+t.map((function(n){return "'"+n+"'"})).join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function r(n){return !!n&&!!n[Q]}function t(n){var r;return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var r=Object.getPrototypeOf(n);if(null===r)return !0;var t=Object.hasOwnProperty.call(r,"constructor")&&r.constructor;return t===Object||"function"==typeof t&&Function.toString.call(t)===Z}(n)||Array.isArray(n)||!!n[L]||!!(null===(r=n.constructor)||void 0===r?void 0:r[L])||s(n)||v(n))}function i(n,r,t){void 0===t&&(t=!1),0===o(n)?(t?Object.keys:nn)(n).forEach((function(e){t&&"symbol"==typeof e||r(e,n[e],n);})):n.forEach((function(t,e){return r(e,t,n)}));}function o(n){var r=n[Q];return r?r.i>3?r.i-4:r.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,r){return 2===o(n)?n.has(r):Object.prototype.hasOwnProperty.call(n,r)}function a(n,r){return 2===o(n)?n.get(r):n[r]}function f(n,r,t){var e=o(n);2===e?n.set(r,t):3===e?(n.delete(r),n.add(t)):n[r]=t;}function c(n,r){return n===r?0!==n||1/n==1/r:n!=n&&r!=r}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return Array.prototype.slice.call(n);var r=rn(n);delete r[Q];for(var t=nn(r),e=0;e<t.length;e++){var i=t[e],o=r[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(r[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]});}return Object.create(Object.getPrototypeOf(n),r)}function d(n,e){return void 0===e&&(e=!1),y(n)||r(n)||!t(n)?n:(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,r){return d(r,!0)}),!0),n)}function h(){n(2);}function y(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function b(r){var t=tn[r];return t||n(18,r),t}function _(){return "production"===process.env.NODE_ENV||U||n(0),U}function j(n,r){r&&(b("Patches"),n.u=[],n.s=[],n.v=r);}function O(n){g(n),n.p.forEach(S),n.p=null;}function g(n){n===U&&(U=n.l);}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var r=n[Q];0===r.i||1===r.i?r.j():r.O=!0;}function P(r,e){e._=e.p.length;var i=e.p[0],o=void 0!==r&&r!==i;return e.h.g||b("ES5").S(e,r,o),o?(i[Q].P&&(O(e),n(4)),t(r)&&(r=M(e,r),e.l||x(e,r)),e.u&&b("Patches").M(i[Q].t,r,e.u,e.s)):r=M(e,i,[]),O(e),e.u&&e.v(e.u,e.s),r!==H?r:void 0}function M(n,r,t){if(y(r))return r;var e=r[Q];if(!e)return i(r,(function(i,o){return A(n,e,r,i,o,t)}),!0),r;if(e.A!==n)return r;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o;i(3===e.i?new Set(o):o,(function(r,i){return A(n,e,o,r,i,t)})),x(n,o,!1),t&&n.u&&b("Patches").R(e,t,n.u,n.s);}return e.o}function A(e,i,o,a,c,s){if("production"!==process.env.NODE_ENV&&c===o&&n(5),r(c)){var v=M(e,c,s&&i&&3!==i.i&&!u(i.D,a)?s.concat(a):void 0);if(f(o,a,v),!r(v))return;e.m=!1;}if(t(c)&&!y(c)){if(!e.h.F&&e._<1)return;M(e,c),i&&i.A.l||x(e,c);}}function x(n,r,t){void 0===t&&(t=!1),n.h.F&&n.m&&d(r,t);}function z(n,r){var t=n[Q];return (t?p(t):n)[r]}function I(n,r){if(r in n)for(var t=Object.getPrototypeOf(n);t;){var e=Object.getOwnPropertyDescriptor(t,r);if(e)return e;t=Object.getPrototypeOf(t);}}function k(n){n.P||(n.P=!0,n.l&&k(n.l));}function E(n){n.o||(n.o=l(n.t));}function R(n,r,t){var e=s(r)?b("MapSet").N(r,t):v(r)?b("MapSet").T(r,t):n.g?function(n,r){var t=Array.isArray(n),e={i:t?1:0,A:r?r.A:_(),P:!1,I:!1,D:{},l:r,t:n,k:null,o:null,j:null,C:!1},i=e,o=en;t&&(i=[e],o=on);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(r,t):b("ES5").J(r,t);return (t?t.A:_()).p.push(e),e}function D(e){return r(e)||n(22,e),function n(r){if(!t(r))return r;var e,u=r[Q],c=o(r);if(u){if(!u.P&&(u.i<4||!b("ES5").K(u)))return u.t;u.I=!0,e=F(r,c),u.I=!1;}else e=F(r,c);return i(e,(function(r,t){u&&a(u.t,r)===t||f(e,r,n(t));})),3===c?new Set(e):e}(e)}function F(n,r){switch(r){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return "produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return "'current' expects a draft, got: "+n},23:function(n){return "'original' expects a draft, got: "+n},24:"Patching reserved attributes like __proto__, prototype and constructor is not allowed"},Z=""+Object.prototype.constructor,nn="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,rn=Object.getOwnPropertyDescriptors||function(n){var r={};return nn(n).forEach((function(t){r[t]=Object.getOwnPropertyDescriptor(n,t);})),r},tn={},en={get:function(n,r){if(r===Q)return n;var e=p(n);if(!u(e,r))return function(n,r,t){var e,i=I(r,t);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,r);var i=e[r];return n.I||!t(i)?i:i===z(n.t,r)?(E(n),n.o[r]=R(n.A.h,i,n)):i},has:function(n,r){return r in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,r,t){var e=I(p(n),r);if(null==e?void 0:e.set)return e.set.call(n.k,t),!0;if(!n.P){var i=z(p(n),r),o=null==i?void 0:i[Q];if(o&&o.t===t)return n.o[r]=t,n.D[r]=!1,!0;if(c(t,i)&&(void 0!==t||u(n.t,r)))return !0;E(n),k(n);}return n.o[r]===t&&"number"!=typeof t&&(void 0!==t||r in n.o)||(n.o[r]=t,n.D[r]=!0,!0)},deleteProperty:function(n,r){return void 0!==z(n.t,r)||r in n.t?(n.D[r]=!1,E(n),k(n)):delete n.D[r],n.o&&delete n.o[r],!0},getOwnPropertyDescriptor:function(n,r){var t=p(n),e=Reflect.getOwnPropertyDescriptor(t,r);return e?{writable:!0,configurable:1!==n.i||"length"!==r,enumerable:e.enumerable,value:t[r]}:e},defineProperty:function(){n(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12);}},on={};i(en,(function(n,r){on[n]=function(){return arguments[0]=arguments[0][0],r.apply(this,arguments)};})),on.deleteProperty=function(r,t){return "production"!==process.env.NODE_ENV&&isNaN(parseInt(t))&&n(13),on.set.call(this,r,t,void 0)},on.set=function(r,t,e){return "production"!==process.env.NODE_ENV&&"length"!==t&&isNaN(parseInt(t))&&n(14),en.set.call(this,r[0],t,e,r[0])};var un=function(){function e(r){var e=this;this.g=B,this.F=!0,this.produce=function(r,i,o){if("function"==typeof r&&"function"!=typeof i){var u=i;i=r;var a=e;return function(n){var r=this;void 0===n&&(n=u);for(var t=arguments.length,e=Array(t>1?t-1:0),o=1;o<t;o++)e[o-1]=arguments[o];return a.produce(n,(function(n){var t;return (t=i).call.apply(t,[r,n].concat(e))}))}}var f;if("function"!=typeof i&&n(6),void 0!==o&&"function"!=typeof o&&n(7),t(r)){var c=w(e),s=R(e,r,void 0),v=!0;try{f=i(s),v=!1;}finally{v?O(c):g(c);}return "undefined"!=typeof Promise&&f instanceof Promise?f.then((function(n){return j(c,o),P(n,c)}),(function(n){throw O(c),n})):(j(c,o),P(f,c))}if(!r||"object"!=typeof r){if(void 0===(f=i(r))&&(f=r),f===H&&(f=void 0),e.F&&d(f,!0),o){var p=[],l=[];b("Patches").M(r,f,p,l),o(p,l);}return f}n(21,r);},this.produceWithPatches=function(n,r){if("function"==typeof n)return function(r){for(var t=arguments.length,i=Array(t>1?t-1:0),o=1;o<t;o++)i[o-1]=arguments[o];return e.produceWithPatches(r,(function(r){return n.apply(void 0,[r].concat(i))}))};var t,i,o=e.produce(n,r,(function(n,r){t=n,i=r;}));return "undefined"!=typeof Promise&&o instanceof Promise?o.then((function(n){return [n,t,i]})):[o,t,i]},"boolean"==typeof(null==r?void 0:r.useProxies)&&this.setUseProxies(r.useProxies),"boolean"==typeof(null==r?void 0:r.autoFreeze)&&this.setAutoFreeze(r.autoFreeze);}var i=e.prototype;return i.createDraft=function(e){t(e)||n(8),r(e)&&(e=D(e));var i=w(this),o=R(this,e,void 0);return o[Q].C=!0,g(i),o},i.finishDraft=function(r,t){var e=r&&r[Q];"production"!==process.env.NODE_ENV&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,t),P(void 0,i)},i.setAutoFreeze=function(n){this.F=n;},i.setUseProxies=function(r){r&&!B&&n(20),this.g=r;},i.applyPatches=function(n,t){var e;for(e=t.length-1;e>=0;e--){var i=t[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}e>-1&&(t=t.slice(e+1));var o=b("Patches").$;return r(n)?o(n,t):this.produce(n,(function(n){return o(n,t)}))},e}(),an=new un,fn=an.produce;an.produceWithPatches.bind(an);an.setAutoFreeze.bind(an);an.setUseProxies.bind(an);an.applyPatches.bind(an);an.createDraft.bind(an);an.finishDraft.bind(an);var produce = fn;
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+var initialValue = {
+  dependencies: [],
+  state: "loading",
+  value: null
+};
+var ZoldyStoreImpl = /*#__PURE__*/function () {
+  function ZoldyStoreImpl() {
+    var _this = this;
+    var states = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var events = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    _classCallCheck$1(this, ZoldyStoreImpl);
+    this.states = states;
+    this.events = events;
+    _defineProperty$1(this, "getState", function (path) {
+      var _this$states$path;
+      return (_this$states$path = _this.states[path]) !== null && _this$states$path !== void 0 ? _this$states$path : initialValue;
+    });
+    _defineProperty$1(this, "inProcess", false);
   }
-  _createClass$1(ZoldySnapshotImpl, [{
-    key: "cleanCache",
-    value: function cleanCache(path) {
-      var snapshot = this;
-      return snapshot.getCacheValue(path).flatPipe(function (_ref) {
-        var _snapshot$cache$path;
-        _slicedToArray(_ref, 0);
-        snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path = snapshot.cache[path]) !== null && _snapshot$cache$path !== void 0 ? _snapshot$cache$path : {
-          state: "cleanValue"
-        }), {}, {
-          value: null,
-          version: version
-        });
-        if (snapshot.parent) {
-          return snapshot.parent.cleanCache(path);
-        } else {
-          return mono.then();
-        }
-      });
+  _createClass$1(ZoldyStoreImpl, [{
+    key: "getEvents",
+    value: function getEvents() {
+      return this.events;
+    }
+  }, {
+    key: "setEvents",
+    value: function setEvents(events) {
+      this.events = events;
+    }
+  }, {
+    key: "getValue",
+    value: function getValue(path) {
+      var _this$states$path2;
+      return (_this$states$path2 = this.states[path]) === null || _this$states$path2 === void 0 ? void 0 : _this$states$path2.value;
     }
   }, {
     key: "addDependency",
     value: function addDependency(path, dependency) {
-      var snapshot = this;
-      return snapshot.hasDependency(path, dependency).flatPipe(function (b) {
-        if (!b) {
-          return snapshot.getDependencies(path).array().flatPipe(function (array) {
-            return snapshot.setDependency(path, [].concat(_toConsumableArray(array), [dependency]));
-          });
-        }
-        return mono.then();
+      this.states = produce(this.states, function (draft) {
+        var _draft$path;
+        draft[path] = produce((_draft$path = draft[path]) !== null && _draft$path !== void 0 ? _draft$path : initialValue, function (d) {
+          if (!d.dependencies.includes(dependency)) {
+            d.dependencies = [].concat(_toConsumableArray(d.dependencies), [dependency]);
+          }
+        });
       });
     }
   }, {
     key: "hasDependency",
     value: function hasDependency(path, dependency) {
+      var _this$states$path$dep, _this$states$path3;
+      var dependencies = (_this$states$path$dep = (_this$states$path3 = this.states[path]) === null || _this$states$path3 === void 0 ? void 0 : _this$states$path3.dependencies) !== null && _this$states$path$dep !== void 0 ? _this$states$path$dep : [];
+      return dependencies.includes(dependency);
+    }
+  }, {
+    key: "set",
+    value: function set(path, value) {
+      var _this2 = this;
+      var _produce = produce([this.states, this.events], function (draft) {
+          _this2._recipeSet(path, value, draft);
+        }),
+        _produce2 = _slicedToArray(_produce, 2),
+        data = _produce2[0],
+        events = _produce2[1];
+      this.states = data;
+      this.events = events;
+    }
+  }, {
+    key: "getDependencies",
+    value: function getDependencies(path) {
+      var _this$states$path$dep2, _this$states$path4;
+      return (_this$states$path$dep2 = (_this$states$path4 = this.states[path]) === null || _this$states$path4 === void 0 ? void 0 : _this$states$path4.dependencies) !== null && _this$states$path$dep2 !== void 0 ? _this$states$path$dep2 : [];
+    }
+  }, {
+    key: "setDependency",
+    value: function setDependency(path, dependencies) {
+      this.states = produce(this.states, function (draft) {
+        var _draft$path2;
+        draft[path] = produce((_draft$path2 = draft[path]) !== null && _draft$path2 !== void 0 ? _draft$path2 : initialValue, function (d) {
+          d.dependencies = dependencies;
+        });
+      });
+    }
+  }, {
+    key: "_recipeReset",
+    value: function _recipeReset(path, _ref) {
+      var _data$path$dependenci, _data$path;
+      var _ref2 = _slicedToArray(_ref, 2),
+        data = _ref2[0],
+        events = _ref2[1];
+      if (path in data) {
+        data[path] = produce(data[path], function (d) {
+          d.state = "loading";
+          d.value = null;
+        });
+      }
+      var _iterator = _createForOfIteratorHelper((_data$path$dependenci = (_data$path = data[path]) === null || _data$path === void 0 ? void 0 : _data$path.dependencies) !== null && _data$path$dependenci !== void 0 ? _data$path$dependenci : []),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var p = _step.value;
+          this._recipeReset(p, [data, events]);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      events.push([path, data[path]]);
+    }
+  }, {
+    key: "_recipeSet",
+    value: function _recipeSet(path, value, _ref3) {
+      var _states$path, _states$path$dependen, _states$path2;
+      var _ref4 = _slicedToArray(_ref3, 2),
+        states = _ref4[0],
+        events = _ref4[1];
+      states[path] = produce((_states$path = states[path]) !== null && _states$path !== void 0 ? _states$path : initialValue, function (d) {
+        d.state = "hasValue";
+        d.value = value;
+      });
+      var dependencies = (_states$path$dependen = (_states$path2 = states[path]) === null || _states$path2 === void 0 ? void 0 : _states$path2.dependencies) !== null && _states$path$dependen !== void 0 ? _states$path$dependen : [];
+      var _iterator2 = _createForOfIteratorHelper(dependencies),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var p = _step2.value;
+          this._recipeReset(p, [states, events]);
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      events.push([path, states[path]]);
+    }
+  }, {
+    key: "reset",
+    value: function reset(path) {
+      var _this3 = this;
+      var _produce3 = produce([this.states, this.events], function (draft) {
+          _this3._recipeReset(path, draft);
+        }),
+        _produce4 = _slicedToArray(_produce3, 2),
+        states = _produce4[0],
+        events = _produce4[1];
+      this.states = states;
+      this.events = events;
+    }
+  }]);
+  return ZoldyStoreImpl;
+}();
+var ZoldySnapshotImpl = /*#__PURE__*/function () {
+  function ZoldySnapshotImpl(cache, parent) {
+    _classCallCheck$1(this, ZoldySnapshotImpl);
+    this.cache = cache;
+    this.parent = parent;
+    _defineProperty$1(this, "eventEmitter", void 0);
+    this.eventEmitter = new EventEmitter();
+  }
+  _createClass$1(ZoldySnapshotImpl, [{
+    key: "reset",
+    value: function reset(path) {
+      var snapshot = this;
+      return snapshot.getCacheState(path).flatPipe(function () {
+        snapshot.cache.reset(path);
+        if (snapshot.parent) {
+          return snapshot.parent.reset(path);
+        } else {
+          return mono.then();
+        }
+      }).flatPipe(function () {
+        return snapshot.emitEvents();
+      });
+    }
+  }, {
+    key: "emitEvents",
+    value: function emitEvents() {
+      var _this4 = this;
+      var snapshot = this;
+      var events = snapshot.cache.getEvents();
+      events.forEach(function (e) {
+        return _this4.eventEmitter.emit(e[0], e[1]);
+      });
+      snapshot.cache.setEvents([]);
+      return mono.then();
+    }
+  }, {
+    key: "addDependency",
+    value: function addDependency(path, dependency) {
       var snapshot = this;
       return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-        var _snapshot$cache$path$, _snapshot$cache$path2;
-        var dependencies;
         return regenerator.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                dependencies = (_snapshot$cache$path$ = (_snapshot$cache$path2 = snapshot.cache[path]) === null || _snapshot$cache$path2 === void 0 ? void 0 : _snapshot$cache$path2.dependencies) !== null && _snapshot$cache$path$ !== void 0 ? _snapshot$cache$path$ : [];
-                return _context.abrupt("return", [dependencies.includes(dependency)]);
+                snapshot.cache.addDependency(path, dependency);
+                return _context.abrupt("return", [Void]);
               case 2:
               case "end":
                 return _context.stop();
@@ -2378,22 +2525,16 @@ var ZoldySnapshotImpl = /*#__PURE__*/function () {
       })));
     }
   }, {
-    key: "setDependency",
-    value: function setDependency(path, dependencies) {
+    key: "hasDependency",
+    value: function hasDependency(path, dependency) {
       var snapshot = this;
       return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-        var _snapshot$cache$path3;
         return regenerator.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path3 = snapshot.cache[path]) !== null && _snapshot$cache$path3 !== void 0 ? _snapshot$cache$path3 : {
-                  state: "noValue"
-                }), {}, {
-                  dependencies: dependencies
-                });
-                return _context2.abrupt("return", [Void]);
-              case 2:
+                return _context2.abrupt("return", [snapshot.cache.hasDependency(path, dependency)]);
+              case 1:
               case "end":
                 return _context2.stop();
             }
@@ -2404,17 +2545,14 @@ var ZoldySnapshotImpl = /*#__PURE__*/function () {
   }, {
     key: "getDependencies",
     value: function getDependencies(path) {
-      var _this = this;
+      var snapshot = this;
       return flux.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-        var _this$cache$path$depe, _this$cache$path;
-        var dependencies;
         return regenerator.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                dependencies = (_this$cache$path$depe = (_this$cache$path = _this.cache[path]) === null || _this$cache$path === void 0 ? void 0 : _this$cache$path.dependencies) !== null && _this$cache$path$depe !== void 0 ? _this$cache$path$depe : [];
-                return _context3.abrupt("return", dependencies);
-              case 2:
+                return _context3.abrupt("return", snapshot.cache.getDependencies(path));
+              case 1:
               case "end":
                 return _context3.stop();
             }
@@ -2423,17 +2561,17 @@ var ZoldySnapshotImpl = /*#__PURE__*/function () {
       })));
     }
   }, {
-    key: "hasCacheState",
-    value: function hasCacheState(path) {
+    key: "setCacheValue",
+    value: function setCacheValue(path, value) {
       var snapshot = this;
       return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4() {
-        var _snapshot$cache$path$2, _snapshot$cache$path4;
         return regenerator.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                return _context4.abrupt("return", [(_snapshot$cache$path$2 = (_snapshot$cache$path4 = snapshot.cache[path]) === null || _snapshot$cache$path4 === void 0 ? void 0 : _snapshot$cache$path4.state) !== null && _snapshot$cache$path$2 !== void 0 ? _snapshot$cache$path$2 : "noValue"]);
-              case 1:
+                snapshot.cache.set(path, value);
+                return _context4.abrupt("return", [Void]);
+              case 2:
               case "end":
                 return _context4.stop();
             }
@@ -2442,79 +2580,82 @@ var ZoldySnapshotImpl = /*#__PURE__*/function () {
       })));
     }
   }, {
-    key: "setCacheValue",
-    value: function setCacheValue(path, value) {
+    key: "getCacheState",
+    value: function getCacheState(path) {
       var snapshot = this;
-      return mono.fromCallBack( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
-        var _snapshot$cache$path5;
-        return regenerator.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                version = version + 1;
-                snapshot.cache[path] = _objectSpread(_objectSpread({}, (_snapshot$cache$path5 = snapshot.cache[path]) !== null && _snapshot$cache$path5 !== void 0 ? _snapshot$cache$path5 : {
-                  state: "hasValue"
-                }), {}, {
-                  value: value,
-                  version: version
-                });
-                return _context5.abrupt("return", [Void]);
-              case 3:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5);
-      })));
-    }
-  }, {
-    key: "getCacheValue",
-    value: function getCacheValue(path) {
-      var snapshot = this;
-      return this.hasCacheState(path).flatPipe(function (state) {
-        var _snapshot$cache$path6;
-        if (state == 'noValue' && snapshot.parent) {
-          return snapshot.parent.getCacheValue(path);
+      return mono.just(path).pipe(snapshot.cache.getState).flatPipe(function (state) {
+        if (state.state != 'hasValue' && snapshot.parent) {
+          return snapshot.parent.getCacheState(path);
         }
-        var value = (_snapshot$cache$path6 = snapshot.cache[path]) === null || _snapshot$cache$path6 === void 0 ? void 0 : _snapshot$cache$path6.value;
-        return mono.just([state, value]);
+        return mono.just(snapshot.cache.getState(path));
       });
     }
   }, {
-    key: "get",
-    value: function get(_ref8) {
-      var _get = _ref8.get,
-        path = _ref8.path;
+    key: "getState",
+    value: function getState(_ref9) {
+      var _this5 = this;
+      var get = _ref9.get,
+        path = _ref9.path;
       var snapshot = this;
-      return snapshot.getCacheValue(path).flatPipe(function (_ref9) {
-        var _ref10 = _slicedToArray(_ref9, 2),
-          state = _ref10[0],
-          value = _ref10[1];
-        if (state == "hasValue") {
-          return mono.just(value);
+      return snapshot.getCacheState(path).flatPipe(function (state) {
+        if (state.state == "hasValue") {
+          return mono.just(state);
         } else {
-          return _get().flatPipe(function (v) {
-            return snapshot.setCacheValue(path, v).thenReturn(v);
-          });
+          return _this5._get(path, get).then(snapshot.getCacheState(path));
         }
+      });
+    }
+  }, {
+    key: "_get",
+    value: function _get(path, get) {
+      var _this6 = this;
+      var snapshot = this;
+      return zoldyPathParentProvider.get().flatPipe(function (value) {
+        if (value) {
+          return _this6.addDependency(path, value).thenReturn(value);
+        }
+        return mono.just(value);
+      }).flatPipe(function (oldPathParent) {
+        return zoldyPathParentProvider.define(path).then(get().flatPipe(function (v) {
+          return snapshot.setCacheValue(path, v).then(zoldyPathParentProvider.define(oldPathParent));
+        }));
+      }).flatPipe(function () {
+        return snapshot.emitEvents();
+      });
+    }
+  }, {
+    key: "subscribe",
+    value: function subscribe(path, callback) {
+      var snapshot = this;
+      return mono.fromCallBack(function () {
+        snapshot.eventEmitter.on(path, callback);
+        return [callback];
+      }).flatPipe(function (cb) {
+        return mono.just(function () {
+          snapshot.eventEmitter.removeListener(path, cb);
+          return mono.then();
+        });
       });
     }
   }, {
     key: "set",
-    value: function set(_ref11) {
-      var path = _ref11.path,
-        value = _ref11.value;
-      return this.setCacheValue(path, value);
+    value: function set(_ref10) {
+      var path = _ref10.path,
+        value = _ref10.value;
+      var snapshot = this;
+      return snapshot.setCacheValue(path, value).then().flatPipe(function () {
+        return snapshot.emitEvents();
+      });
     }
   }]);
   return ZoldySnapshotImpl;
 }();
 
-var getSnapshotOrThrow = function getSnapshotOrThrow(zoldyContext) {
-  return zoldyContext != null ? mono.just(zoldyContext) : mono.error(new Error("NotFound ZoldySnapshot"));
+var getSnapshotOrThrow = function getSnapshotOrThrow(zoldySnapshot) {
+  return zoldySnapshot != null ? mono.just(zoldySnapshot) : mono.error(new Error("NotFound ZoldySnapshot"));
 };
 var createSnapshot = function createSnapshot(parent) {
-  return new ZoldySnapshotImpl(parent);
+  return new ZoldySnapshotImpl(new ZoldyStoreImpl({}), parent);
 };
 
 var ZoldyAtomImpl = /*#__PURE__*/function () {
@@ -2526,34 +2667,49 @@ var ZoldyAtomImpl = /*#__PURE__*/function () {
     this._default = config['default'];
   }
   _createClass$1(ZoldyAtomImpl, [{
+    key: "get",
+    value: function get() {
+      return this.getState().pipe(function (s) {
+        return s.value;
+      });
+    }
+  }, {
+    key: "getState",
+    value: function getState() {
+      var _this = this;
+      var path = this.path;
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.getState({
+          get: function get() {
+            return _this._default();
+          },
+          path: path
+        });
+      });
+    }
+  }, {
+    key: "subscribe",
+    value: function subscribe(callback) {
+      var path = this.path;
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.subscribe(path, callback);
+      });
+    }
+  }, {
     key: "reset",
     value: function reset() {
       var path = this.path;
-      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
-        return zoldyContext.cleanCache(path);
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.reset(path);
       });
     }
   }, {
     key: "set",
     value: function set(value) {
       var path = this.path;
-      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
-        return zoldyContext.set({
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.set({
           value: value,
-          path: path
-        });
-      });
-    }
-  }, {
-    key: "get",
-    value: function get() {
-      var _this = this;
-      var path = this.path;
-      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
-        return zoldyContext.get({
-          get: function get() {
-            return _this._default();
-          },
           path: path
         });
       });
@@ -2572,7 +2728,7 @@ var atom$1 = function atom(config) {
 };
 
 function _toArray(arr) {
-  return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableRest();
 }
 
 var _encode = function encode(fields, fieldNameArray, defualtValue) {
@@ -2631,17 +2787,40 @@ var ZoldySelectorValueImpl = /*#__PURE__*/function () {
     this._get = config['get'];
   }
   _createClass$1(ZoldySelectorValueImpl, [{
-    key: "get",
-    value: function get() {
+    key: "subscribe",
+    value: function subscribe(callback) {
+      var path = this.path;
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.subscribe(path, callback);
+      });
+    }
+  }, {
+    key: "getState",
+    value: function getState() {
       var _this = this;
       var path = this.path;
-      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
-        return zoldyContext.get({
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.getState({
           get: function get() {
             return _this["_get"];
           },
           path: path
         });
+      });
+    }
+  }, {
+    key: "get",
+    value: function get() {
+      return this.getState().pipe(function (s) {
+        return s.value;
+      });
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      var path = this.path;
+      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldySnapshot) {
+        return zoldySnapshot.reset(path);
       });
     }
   }]);
@@ -2660,12 +2839,14 @@ var ZoldySelectorStateImpl = /*#__PURE__*/function () {
       return this.zoldyValue.path;
     }
   }, {
-    key: "reset",
-    value: function reset() {
-      var path = this.path;
-      return zoldySnapshotProvider.get().flatPipe(getSnapshotOrThrow).flatPipe(function (zoldyContext) {
-        return zoldyContext.cleanCache(path);
-      });
+    key: "getState",
+    value: function getState() {
+      return this.zoldyValue.getState();
+    }
+  }, {
+    key: "subscribe",
+    value: function subscribe(callback) {
+      return this.zoldyValue.subscribe(callback);
     }
   }, {
     key: "get",
@@ -2676,6 +2857,11 @@ var ZoldySelectorStateImpl = /*#__PURE__*/function () {
     key: "set",
     value: function set(value) {
       return this._set(value);
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      return this.zoldyValue.reset();
     }
   }]);
   return ZoldySelectorStateImpl;
@@ -2692,10 +2878,20 @@ var selector$1 = function selector(config) {
 var selectorFamily$1 = function selectorFamily(config) {
   return function (params) {
     var paramsBuild = new ZoldyParamsImpl(config.path, config.params);
-    return selector$1({
-      get: config.get(params),
-      path: paramsBuild.encode(params)
-    });
+    if ("set" in config) {
+      return selector$1({
+        get: config.get(params),
+        path: paramsBuild.encode(params),
+        set: function set(v) {
+          return config.set(params, v);
+        }
+      });
+    } else {
+      return selector$1({
+        get: config.get(params),
+        path: paramsBuild.encode(params)
+      });
+    }
   };
 };
 

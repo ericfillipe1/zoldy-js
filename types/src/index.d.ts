@@ -4,7 +4,6 @@ export * from "./selector";
 export * from "./selectorFamily";
 export * from "./types";
 export * from "./snapshot";
-export * from "./source";
 declare const _default: {
     atomFamily: import("./atomFamily").ZoldyAtomFamilyStatic;
     atom: import("./atom").ZoldyAtomStatic;
