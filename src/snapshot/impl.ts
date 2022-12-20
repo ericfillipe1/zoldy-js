@@ -8,9 +8,8 @@ import { ZoldyStoreState } from "../types";
 
 const initialValue: ZoldyStoreState = {
     dependencies: [],
-    state: "noValue",
-    value: null,
-    version: 0
+    state: "loading",
+    value: null
 }
 export class ZoldyStoreImpl implements ZoldyStore {
     constructor(
@@ -66,9 +65,8 @@ export class ZoldyStoreImpl implements ZoldyStore {
     _recipeReset(path: string, [data, events]: [ZoldyStoreStates, ZoldyStoreEvents]) {
         if (path in data) {
             data[path] = produce(data[path], d => {
-                d.state = "cleanValue";
+                d.state = "loading";
                 d.value = null;
-                d.version = d.version + 1;
             })
         }
         for (const p of data[path]?.dependencies ?? []) {
@@ -81,7 +79,6 @@ export class ZoldyStoreImpl implements ZoldyStore {
         states[path] = produce(states[path] ?? initialValue, d => {
             d.state = "hasValue"
             d.value = value
-            d.version = d.version + 1
         })
         const dependencies = states[path]?.dependencies ?? []
         for (const p of dependencies) {

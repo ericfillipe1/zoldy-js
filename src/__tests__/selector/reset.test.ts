@@ -43,19 +43,16 @@ describe('selector reset', () => {
                     "dependencies": [],
                     "state": "hasValue",
                     "value": 0,
-                    "version": 1,
                 },
                 {
                     "dependencies": [],
-                    "state": "cleanValue",
+                    "state": "loading",
                     "value": null,
-                    "version": 2,
                 },
                 {
                     "dependencies": [],
                     "state": "hasValue",
                     "value": 1,
-                    "version": 3,
                 }
             ]
         );

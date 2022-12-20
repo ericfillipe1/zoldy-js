@@ -17,20 +17,15 @@ export abstract class ZoldyState<T> extends ZoldyValue<T> {
 
 export type ZoldyStoreState<T = any> = {
     value: T
-    version: number
     state: "hasValue"
     dependencies: string[]
 } | {
     value: null
-    version: number
-    state: "noValue"
-    dependencies: string[]
-} | {
-    value: null
-    version: number
-    state: "cleanValue"
+    state: "loading"
     dependencies: string[]
 }
+
+
 export type ZoldyStoreStateType = ZoldyStoreState["state"]
 
 export type Default<T> = RakunMono<T>

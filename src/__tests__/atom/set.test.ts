@@ -32,8 +32,7 @@ describe('atom set', () => {
                 users: {
                     dependencies: [],
                     state: "hasValue",
-                    value: 25,
-                    version: 1
+                    value: 25
                 }
             },
             25,
@@ -41,8 +40,7 @@ describe('atom set', () => {
                 users: {
                     dependencies: [],
                     state: "hasValue",
-                    value: 25,
-                    version: 1
+                    value: 25
                 }
             }
         ]);
