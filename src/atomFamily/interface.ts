@@ -1,7 +1,6 @@
 
 import { Fields } from "../param/interface";
-import { ZoldyState } from "../source";
-import { DefaultFamily } from "../types";
+import { DefaultFamily, ZoldyState } from "../types";
 
 export type ZoldyAtomFamilyBuildConfig<P, T> = {
     path: string

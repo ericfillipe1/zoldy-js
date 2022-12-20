@@ -1,5 +1,5 @@
-import { ZoldyState, ZoldyValue } from "../source";
-import { Get, Set } from "../types";
+
+import { Get, Set, ZoldyState, ZoldyValue } from "../types";
 
 
 export type ZoldySelectorBuildConfigReadOnly<T> = {

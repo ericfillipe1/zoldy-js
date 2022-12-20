@@ -1,6 +1,5 @@
 import { Fields } from "../param/interface";
-import { ZoldyState, ZoldyValue } from "../source";
-import { SetFamily, GetFamily } from "../types";
+import { SetFamily, GetFamily, ZoldyValue, ZoldyState } from "../types";
 
 export type ZoldySelectorFamilyBuildConfigReadOnly<P, T> = {
     path: string

@@ -6,10 +6,18 @@ import { ZoldySelectorFamilyStatic } from "./interface";
 const selectorFamily: ZoldySelectorFamilyStatic = (config: any) => {
     return (params) => {
         const paramsBuild = new ZoldyParamsImpl<typeof params>(config.path, config.params)
-        return selector({
-            get: config.get(params),
-            path: paramsBuild.encode(params)
-        }) as any;
+        if ("set" in config) {
+            return selector({
+                get: config.get(params),
+                path: paramsBuild.encode(params),
+                set: (v: any) => config.set(params, v)
+            }) as any;
+        } else {
+            return selector({
+                get: config.get(params),
+                path: paramsBuild.encode(params)
+            }) as any;
+        }
     }
 }
 export default selectorFamily;

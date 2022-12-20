@@ -1,5 +1,5 @@
-import { ZoldyState } from "../source";
-import { Default } from "../types";
+
+import { Default, ZoldyState } from "../types";
 
 
 

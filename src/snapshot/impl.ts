@@ -1,26 +1,40 @@
 import produce from "immer";
 import { RakunMono, Void, mono, RakunFlux, flux } from "rakun";
-import { GetParams, SetParams, ZoldySnapshot, ZoldySnapshotCache, ZoldySnapshotCacheData, ZoldySnapshotCacheDataItem, ZoldySnapshotCacheState } from "./interface";
-import { zoldyPathParentProvider } from "./provider";
+import { EventEmitter } from 'events'
 
-const initialValue: ZoldySnapshotCacheDataItem = {
+import { GetParams, SetParams, ZoldySnapshot, ZoldyStore, ZoldyStoreEvents, ZoldyStoreStates } from "./interface";
+import { zoldyPathParentProvider } from "./provider";
+import { ZoldyStoreState } from "../types";
+
+const initialValue: ZoldyStoreState = {
     dependencies: [],
     state: "noValue",
     value: null,
     version: 0
 }
-export class ZoldySnapshotCacheImpl implements ZoldySnapshotCache {
-    constructor(public data: ZoldySnapshotCacheData) {
+export class ZoldyStoreImpl implements ZoldyStore {
+    constructor(
+        public states: ZoldyStoreStates = {},
+        public events: ZoldyStoreEvents = []
+    ) {
+    }
 
+    getEvents(): ZoldyStoreEvents {
+        return this.events
+    }
+    setEvents(events: ZoldyStoreEvents): void {
+        this.events = events
     }
     getValue(path: string): any | null {
-        return this.data[path]?.value
+        return this.states[path]?.value
     }
-    getState(path: string): ZoldySnapshotCacheState {
-        return this.data[path]?.state ?? "noValue"
+    getState = (path: string): ZoldyStoreState => {
+        return this.states[path] ?? initialValue
     }
+    inProcess = false;
+
     addDependency(path: string, dependency: string): void {
-        this.data = produce(this.data, draft => {
+        this.states = produce(this.states, draft => {
             draft[path] = produce(draft[path] ?? initialValue, d => {
                 if (!d.dependencies.includes(dependency)) {
                     d.dependencies = [...d.dependencies, dependency]
@@ -29,68 +43,92 @@ export class ZoldySnapshotCacheImpl implements ZoldySnapshotCache {
         })
     }
     hasDependency(path: string, dependency: string): boolean {
-        const dependencies: string[] = this.data[path]?.dependencies ?? []
+        const dependencies: string[] = this.states[path]?.dependencies ?? []
         return dependencies.includes(dependency)
     }
-    setCacheValue(path: string, value: any): void {
-        this.data = produce(this.data, draft => {
-            draft[path] = produce(draft[path] ?? initialValue, d => {
-                d.state = "hasValue"
-                d.value = value
-                d.version = d.version + 1
-            })
+    set(path: string, value: any): void {
+        const [data, events] = produce([this.states, this.events], draft => {
+            this._recipeSet(path, value, draft)
         })
+        this.states = data
+        this.events = events
     }
     getDependencies(path: string): string[] {
-        return this.data[path]?.dependencies ?? []
+        return this.states[path]?.dependencies ?? []
     }
     setDependency(path: string, dependencies: string[]): void {
-        this.data = produce(this.data, draft => {
+        this.states = produce(this.states, draft => {
             draft[path] = produce(draft[path] ?? initialValue, d => {
                 d.dependencies = dependencies;
             })
         })
     }
-    get(path: string): any {
-        return this.data[path]
+    _recipeReset(path: string, [data, events]: [ZoldyStoreStates, ZoldyStoreEvents]) {
+        if (path in data) {
+            data[path] = produce(data[path], d => {
+                d.state = "cleanValue";
+                d.value = null;
+                d.version = d.version + 1;
+            })
+        }
+        for (const p of data[path]?.dependencies ?? []) {
+            this._recipeReset(p, [data, events])
+        }
+        events.push([path, data[path]])
     }
 
-    cleanCache(path: string) {
-        this.data = produce(this.data, draft => {
-            if (path in draft) {
-                draft[path] = produce(draft[path], d => {
-                    d.state = "cleanValue";
-                    d.value = null;
-                    d.version = d.version + 1;
-                })
-            }
-            for (const p in draft) {
-                if (draft[p]?.dependencies && draft[p].dependencies.includes(path)) {
-                    draft[p].dependencies = draft[p].dependencies.filter(dep => dep != path)
-                }
-            }
+    _recipeSet(path: string, value: any, [states, events]: [ZoldyStoreStates, ZoldyStoreEvents]) {
+        states[path] = produce(states[path] ?? initialValue, d => {
+            d.state = "hasValue"
+            d.value = value
+            d.version = d.version + 1
         })
+        const dependencies = states[path]?.dependencies ?? []
+        for (const p of dependencies) {
+            this._recipeReset(p, [states, events])
+        }
+        events.push([path, states[path]])
+    }
+
+    reset(path: string) {
+        const [states, events] = produce([this.states, this.events], draft => {
+            this._recipeReset(path, draft)
+        })
+        this.states = states
+        this.events = events
     }
 
 }
 
 
 export class ZoldySnapshotImpl implements ZoldySnapshot {
-    constructor(public cache: ZoldySnapshotCache, public parent: ZoldySnapshot | null) {
+    public eventEmitter: EventEmitter;
 
+    constructor(public cache: ZoldyStore, public parent: ZoldySnapshot | null) {
+
+        this.eventEmitter = new EventEmitter();
     }
-    cleanCache(path: string): RakunMono<typeof Void> {
+    reset(path: string): RakunMono<typeof Void> {
         const snapshot = this;
-        return snapshot.getCacheValue(path)
-            .flatPipe(([]) => {
-                snapshot.cache.cleanCache(path);
+        return snapshot.getCacheState(path)
+            .flatPipe(() => {
+                snapshot.cache.reset(path);
                 if (snapshot.parent) {
-                    return snapshot.parent.cleanCache(path)
+                    return snapshot.parent.reset(path)
                 } else {
                     return mono.then();
                 }
-
+            })
+            .flatPipe(() => {
+                return snapshot.emitEvents()
             });
+    }
+    emitEvents(): RakunMono<typeof Void> {
+        const snapshot = this;
+        const events = snapshot.cache.getEvents()
+        events.forEach(e => this.eventEmitter.emit(e[0], e[1]))
+        snapshot.cache.setEvents([]);
+        return mono.then();
     }
     addDependency(path: string, dependency: string): RakunMono<typeof Void> {
         const snapshot = this;
@@ -114,45 +152,77 @@ export class ZoldySnapshotImpl implements ZoldySnapshot {
     setCacheValue(path: string, value: any): RakunMono<typeof Void> {
         const snapshot = this;
         return mono.fromCallBack(async () => {
-            snapshot.cache.setCacheValue(path, value)
+            snapshot.cache.set(path, value)
             return [Void]
         });
     }
-    getCacheValue(path: string): RakunMono<[ZoldySnapshotCacheState, any]> {
+    getCacheState(path: string): RakunMono<ZoldyStoreState> {
         const snapshot = this;
         return mono.just(path)
-            .pipe(snapshot.cache.getState.bind(snapshot.cache))
+            .pipe(snapshot.cache.getState)
             .flatPipe((state) => {
-                if (state != 'hasValue' && snapshot.parent) {
-                    return snapshot.parent.getCacheValue(path);
+                if (state.state != 'hasValue' && snapshot.parent) {
+                    return snapshot.parent.getCacheState(path);
                 }
-                const value = snapshot.cache.getValue(path)
-                return mono.just([state, value])
+                return mono.just(snapshot.cache.getState(path))
             });
     }
-    get({ get, path }: GetParams): RakunMono<any> {
+    getState({ get, path }: GetParams): RakunMono<ZoldyStoreState> {
         const snapshot = this;
-        return snapshot.getCacheValue(path)
-            .flatPipe(([state, value]) => {
-                if (state == "hasValue") {
-                    return mono.just(value)
+        return snapshot.getCacheState(path)
+            .flatPipe((state) => {
+                if (state.state == "hasValue") {
+                    return mono.just(state)
                 } else {
-                    return zoldyPathParentProvider.get()
-                        .flatPipe(value => value == null ? mono.then() : this.addDependency(path, value))
-                        .then(zoldyPathParentProvider.define(path)
-                            .then(get()
-                                .flatPipe((v) =>
-                                    snapshot.setCacheValue(path, v)
-                                        .thenReturn(v)
-                                )))
+                    return this._get(path, get)
+                        .then(snapshot.getCacheState(path));
                 }
             });
     }
+    private _get(path: string, get: () => RakunMono<any>): RakunMono<typeof Void> {
+        const snapshot = this;
+        return zoldyPathParentProvider.get()
+            .flatPipe(value => {
+                if (value) {
+                    return this.addDependency(path, value)
+                        .thenReturn(value)
+                }
+                return mono.just(value)
+            })
+            .flatPipe((oldPathParent) => {
+                return zoldyPathParentProvider.define(path)
+                    .then(get()
+                        .flatPipe((v) =>
+                            snapshot.setCacheValue(path, v)
+                                .then(zoldyPathParentProvider.define(oldPathParent))
+                        ))
+            })
+            .flatPipe(() => {
+                return snapshot.emitEvents()
+            });
+
+    }
+
+    subscribe(path: string, callback: (value: ZoldyStoreState) => void): RakunMono<() => RakunMono<typeof Void>> {
+        const snapshot = this;
+
+        return mono.fromCallBack(() => {
+            snapshot.eventEmitter.on(path, callback)
+            return [callback]
+        }).flatPipe((cb) => {
+            return mono.just(() => {
+                snapshot.eventEmitter.removeListener(path, cb);
+                return mono.then();
+            })
+        })
+    }
+
     set({ path, value }: SetParams): RakunMono<typeof Void> {
-        return this.setCacheValue(path, value)
-            .flatPipeMany(() => this.getDependencies(path).flatPipe(dep => {
-                return this.cleanCache(dep)
-            }))
+        const snapshot = this;
+        return snapshot.setCacheValue(path, value)
             .then()
+            .flatPipe(() => {
+                return snapshot.emitEvents()
+            });
     }
 }

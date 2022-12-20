@@ -1,7 +1,7 @@
-import { mono, Void } from "rakun";
+import { mono } from "rakun";
 import atomFamily from "../../atomFamily";
 import param from "../../param";
-import { ZoldySnapshotCacheImpl, ZoldySnapshotImpl } from "../../snapshot/impl";
+import { ZoldyStoreImpl, ZoldySnapshotImpl } from "../../snapshot/impl";
 import { zoldySnapshotProvider } from "../../snapshot/provider";
 
 
@@ -13,28 +13,19 @@ describe('atom set', () => {
         default: (userId) => mono.just(userId + 1)
     })
     test('atom set', async () => {
-        const cache = new ZoldySnapshotCacheImpl({})
-        const snapshot = new ZoldySnapshotImpl(cache, null);
+        const store = new ZoldyStoreImpl({})
+        const snapshot = new ZoldySnapshotImpl(store, null);
         const result = await zoldySnapshotProvider.define(snapshot)
-            .zipWhen(() => mono.just(cache.data))
-            .zipWhen(() => user("test").get())
-            .pipe(([v1, v2]) => [...v1, v2])
-            .zipWhen(() => mono.just(cache.data))
+            .flatPipe(() => user("123").get())
+            .zipWhen(() => user("123").set("652").then(user("123").get()))
+            .zipWhen(() => user("123").reset().then(user("123").get()))
             .pipe(([v1, v2]) => [...v1, v2])
             .blockFirst()
 
         expect(result).toStrictEqual([
-            Void,
-            {},
-            "test1",
-            {
-                'users/test': {
-                    dependencies: [],
-                    state: "hasValue",
-                    value: "test1",
-                    version: 1
-                }
-            }
+            "1231",
+            "652",
+            "1231",
         ]);
     });
 

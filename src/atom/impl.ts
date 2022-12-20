@@ -2,8 +2,7 @@
 import { RakunMono, Void } from "rakun";
 import { zoldySnapshotProvider } from "../snapshot/provider";
 import { getSnapshotOrThrow } from "../snapshot/static";
-import { ZoldyState } from "../source";
-import { Default } from "../types";
+import { Default, ZoldyState, ZoldyStoreState } from "../types";
 
 export type Config<T> = {
     path: string
@@ -18,13 +17,38 @@ export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
         this.path = config['path'];
         this._default = config['default'];
     }
-    reset(): RakunMono<typeof Void> {
+    get(): RakunMono<T> {
+        return this.getState()
+            .pipe((s) => s.value as T)
+    }
+    getState(): RakunMono<ZoldyStoreState<T>> {
         var path = this.path
         return zoldySnapshotProvider.get()
             .flatPipe(getSnapshotOrThrow)
-            .flatPipe(zoldyContext => {
-                return zoldyContext
-                    .cleanCache(path);
+            .flatPipe(zoldySnapshot => {
+                return zoldySnapshot.getState({
+                    get: () => this._default(),
+                    path
+                });
+            })
+    }
+    subscribe(callback: (value: ZoldyStoreState) => void): RakunMono<() => RakunMono<typeof Void>> {
+        var path = this.path
+        return zoldySnapshotProvider.get()
+            .flatPipe(getSnapshotOrThrow)
+            .flatPipe(zoldySnapshot => {
+                return zoldySnapshot.subscribe(path, callback)
+            })
+    }
+
+    reset(): RakunMono<typeof Void> {
+
+        var path = this.path
+        return zoldySnapshotProvider.get()
+            .flatPipe(getSnapshotOrThrow)
+            .flatPipe(zoldySnapshot => {
+                return zoldySnapshot
+                    .reset(path);
             })
     }
 
@@ -32,23 +56,12 @@ export class ZoldyAtomImpl<T> implements ZoldyState<T>  {
         var path = this.path
         return zoldySnapshotProvider.get()
             .flatPipe(getSnapshotOrThrow)
-            .flatPipe(zoldyContext => {
-                return zoldyContext
+            .flatPipe(zoldySnapshot => {
+                return zoldySnapshot
                     .set({
                         value,
                         path
                     });
-            })
-    }
-    get(): RakunMono<T> {
-        var path = this.path
-        return zoldySnapshotProvider.get()
-            .flatPipe(getSnapshotOrThrow)
-            .flatPipe(zoldyContext => {
-                return zoldyContext.get({
-                    get: () => this._default(),
-                    path
-                });
             })
     }
 
