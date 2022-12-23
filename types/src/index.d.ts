@@ -4,6 +4,7 @@ export * from "./selector";
 export * from "./selectorFamily";
 export * from "./types";
 export * from "./snapshot";
+export * from "./param";
 declare const _default: {
     atomFamily: import("./atomFamily").ZoldyAtomFamilyStatic;
     atom: import("./atom").ZoldyAtomStatic;
@@ -12,5 +13,8 @@ declare const _default: {
 export default _default;
 export declare const atomFamily: import("./atomFamily").ZoldyAtomFamilyStatic;
 export declare const atom: import("./atom").ZoldyAtomStatic;
+export declare const param: {
+    string: import("./param").FormatField<string>;
+};
 export declare const selector: import("./selector").ZoldySelectorStatic;
 export declare const selectorFamily: import("./selectorFamily").ZoldySelectorFamilyStatic;

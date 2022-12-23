@@ -3127,6 +3127,18 @@ var selectorFamily$1 = function selectorFamily(config) {
   };
 };
 
+var paramString = {
+  encode: function encode(v) {
+    return v;
+  },
+  decode: function decode(v) {
+    return v;
+  }
+};
+var param$1 = {
+  string: paramString
+};
+
 function _setPrototypeOf(o, p) {
   _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
     o.__proto__ = p;
@@ -3198,7 +3210,8 @@ var index = {
 };
 var atomFamily = atomfamily;
 var atom = atom$1;
+var param = param$1;
 var selector = selector$1;
 var selectorFamily = selectorFamily$1;
 
-export { ZoldyState, ZoldyValue, atom, atomFamily, createSnapshot, index as default, getSnapshotOrThrow, selector, selectorFamily, zoldyPathParentProvider, zoldySnapshotProvider };
+export { ZoldyState, ZoldyValue, atom, atomFamily, createSnapshot, index as default, getSnapshotOrThrow, param, selector, selectorFamily, zoldyPathParentProvider, zoldySnapshotProvider };
