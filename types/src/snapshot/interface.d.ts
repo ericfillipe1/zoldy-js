@@ -1,8 +1,7 @@
-/// <reference types="node" />
 import { RakunMono, Void } from "rakun";
-import { EventEmitter } from "events";
 import { Deferred } from "../utils/promise-delegate";
 import { ZoldyStoreState } from "../types";
+import EventEmitter from "eventemitter3";
 export type GetParams = {
     path: string;
     get: () => RakunMono<any>;

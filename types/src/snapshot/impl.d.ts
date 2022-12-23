@@ -1,17 +1,16 @@
-/// <reference types="node" />
 import { RakunMono, Void, RakunFlux } from "rakun";
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 import { GetParams, SetParams, ZoldySnapshot, ZoldyStore, ZoldyStoreEvents, ZoldyStoreStates } from "./interface";
 import { ZoldyStoreState } from "../types";
 export declare class ZoldyStoreImpl implements ZoldyStore {
     states: ZoldyStoreStates;
     events: ZoldyStoreEvents;
+    inProcess: boolean;
     constructor(states?: ZoldyStoreStates, events?: ZoldyStoreEvents);
     getEvents(): ZoldyStoreEvents;
     setEvents(events: ZoldyStoreEvents): void;
     getValue(path: string): any | null;
     getState: (path: string) => ZoldyStoreState;
-    inProcess: boolean;
     addDependency(path: string, dependency: string): void;
     hasDependency(path: string, dependency: string): boolean;
     set(path: string, value: any): void;
